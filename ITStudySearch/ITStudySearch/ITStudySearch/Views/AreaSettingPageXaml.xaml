@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ITStudySearch.ViewModels;assembly=ITStudySearch"
+             x:Class="ITStudySearch.Views.AreaSettingPageXaml"
+             Title="地域設定">
+  <!--<ContentPage.BindingContext>
+    <vm:AreaSettingPageViewModel />
+  </ContentPage.BindingContext>-->
+  <ContentPage.Content>
+    <TableView Intent="Settings">
+      <TableRoot>
+        <TableSection Title="東京・大阪">
+          <SwitchCell Text="東京" On="{Binding TokyoValue, Mode=TwoWay}" />
+          <SwitchCell Text="大阪" On="{Binding OsakaValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="北海道地方">
+          <SwitchCell Text="北海道" On="{Binding HokkaidoValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="東北地方">
+          <SwitchCell Text="東北地方一括設定" OnChanged="ToggleAreaTohokuValues" />
+          <SwitchCell Text="青森県" On="{Binding AomoriValue, Mode=TwoWay}" />
+          <SwitchCell Text="岩手県" On="{Binding IwateValue, Mode=TwoWay}" />
+          <SwitchCell Text="宮城県" On="{Binding MiyagiValue, Mode=TwoWay}" />
+          <SwitchCell Text="秋田県" On="{Binding AkitaValue, Mode=TwoWay}" />
+          <SwitchCell Text="山形県" On="{Binding YamagataValue, Mode=TwoWay}" />
+          <SwitchCell Text="福島県" On="{Binding FukushimaValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="関東地方">
+          <SwitchCell Text="関東地方一括設定" OnChanged="ToggleAreaKantoValues" />
+          <SwitchCell Text="茨城県" On="{Binding IbarakiValue, Mode=TwoWay}" />
+          <SwitchCell Text="栃木県" On="{Binding TochigiValue, Mode=TwoWay}" />
+          <SwitchCell Text="群馬県" On="{Binding GunmaValue, Mode=TwoWay}" />
+          <SwitchCell Text="埼玉県" On="{Binding SaitamaValue, Mode=TwoWay}" />
+          <SwitchCell Text="千葉県" On="{Binding ChibaValue, Mode=TwoWay}" />
+          <SwitchCell Text="東京都" On="{Binding TokyoValue, Mode=TwoWay}" />
+          <SwitchCell Text="神奈川県" On="{Binding KanagawaValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="中部地方">
+          <SwitchCell Text="中部地方一括設定" OnChanged="ToggleAreaChubuValues" />
+          <SwitchCell Text="新潟県" On="{Binding NiigataValue, Mode=TwoWay}" />
+          <SwitchCell Text="富山県" On="{Binding ToyamaValue, Mode=TwoWay}" />
+          <SwitchCell Text="石川県" On="{Binding IshikawaValue, Mode=TwoWay}" />
+          <SwitchCell Text="福井県" On="{Binding FukuiValue, Mode=TwoWay}" />
+          <SwitchCell Text="山梨県" On="{Binding YamanashiValue, Mode=TwoWay}" />
+          <SwitchCell Text="長野県" On="{Binding NaganoValue, Mode=TwoWay}" />
+          <SwitchCell Text="岐阜県" On="{Binding GifuValue, Mode=TwoWay}" />
+          <SwitchCell Text="静岡県" On="{Binding ShizuokaValue, Mode=TwoWay}" />
+          <SwitchCell Text="愛知県" On="{Binding AichiValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="近畿地方">
+          <SwitchCell Text="近畿地方一括設定" OnChanged="ToggleAreaKinkiValues" />
+          <SwitchCell Text="三重県" On="{Binding MieValue, Mode=TwoWay}" />
+          <SwitchCell Text="滋賀県" On="{Binding ShigaValue, Mode=TwoWay}" />
+          <SwitchCell Text="京都府" On="{Binding KyotoValue, Mode=TwoWay}" />
+          <SwitchCell Text="大阪府" On="{Binding OsakaValue, Mode=TwoWay}" />
+          <SwitchCell Text="兵庫県" On="{Binding HyogoValue, Mode=TwoWay}" />
+          <SwitchCell Text="奈良県" On="{Binding NaraValue, Mode=TwoWay}" />
+          <SwitchCell Text="和歌山県" On="{Binding WakayamaValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="中国地方">
+          <SwitchCell Text="中国地方一括設定" OnChanged="ToggleAreaChugokuValues" />
+          <SwitchCell Text="鳥取県" On="{Binding TottoriValue, Mode=TwoWay}" />
+          <SwitchCell Text="島根県" On="{Binding ShimaneValue, Mode=TwoWay}" />
+          <SwitchCell Text="岡山県" On="{Binding OkayamaValue, Mode=TwoWay}" />
+          <SwitchCell Text="広島県" On="{Binding HiroshimaValue, Mode=TwoWay}" />
+          <SwitchCell Text="山口県" On="{Binding YamaguchiValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="四国地方">
+          <SwitchCell Text="四国地方一括設定" OnChanged="ToggleAreaShikokuValues" />
+          <SwitchCell Text="徳島県" On="{Binding TokushimaValue, Mode=TwoWay}" />
+          <SwitchCell Text="香川県" On="{Binding KagawaValue, Mode=TwoWay}" />
+          <SwitchCell Text="愛媛県" On="{Binding EhimeValue, Mode=TwoWay}" />
+          <SwitchCell Text="高知県" On="{Binding KochiValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="九州地方">
+          <SwitchCell Text="九州地方一括設定" OnChanged="ToggleAreaKyushuValues" />
+          <SwitchCell Text="福岡県" On="{Binding FukuokaValue, Mode=TwoWay}" />
+          <SwitchCell Text="佐賀県" On="{Binding SagaValue, Mode=TwoWay}" />
+          <SwitchCell Text="長崎県" On="{Binding NagasakiValue, Mode=TwoWay}" />
+          <SwitchCell Text="熊本県" On="{Binding KumamotoValue, Mode=TwoWay}" />
+          <SwitchCell Text="大分県" On="{Binding OitaValue, Mode=TwoWay}" />
+          <SwitchCell Text="宮崎県" On="{Binding MiyazakiValue, Mode=TwoWay}" />
+          <SwitchCell Text="鹿児島県" On="{Binding KagoshimaValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="沖縄地方">
+          <SwitchCell Text="沖縄県" On="{Binding OkinawaValue, Mode=TwoWay}" />
+        </TableSection>
+        <TableSection Title="その他">
+          <SwitchCell Text="その他の地域" On="{Binding OtherValue, Mode=TwoWay}" />
+        </TableSection>
+      </TableRoot>
+    </TableView>
+  </ContentPage.Content>
+</ContentPage>

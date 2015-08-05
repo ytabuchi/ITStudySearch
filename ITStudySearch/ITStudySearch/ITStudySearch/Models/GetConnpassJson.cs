@@ -36,7 +36,8 @@ namespace ITStudySearch.Models
             var subUri = sb.ToString();
             var uri = new Uri(string.Format("http://connpass.com/api/v1/event/?" + subUri));
 //#if DEBUG
-//            uri = new Uri("http://connpass.com/api/v1/event/?count=20&ymd=20150711");
+//            uri = new Uri("http://connpass.com/api/v1/event/?event_id=15125");
+//            uri = new Uri("http://connpass.com/api/v1/event/");
 //#endif
 
 
@@ -44,6 +45,8 @@ namespace ITStudySearch.Models
             {
                 using (var client = new HttpClient())
                 {
+                    // Connpass は User-Agent なしのアクセスだと 403 forbidden を返すので Android Chrome の User-Agent を偽装しました。
+                    client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Linux; Android 4.0.3; SC-02C Build/IML74K) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.58 Mobile Safari/537.31");
                     var response = await client.GetAsync(uri);
                     response.EnsureSuccessStatusCode(); // StatusCode が 200 以外なら Exception
 
@@ -59,6 +62,13 @@ namespace ITStudySearch.Models
                         }
                     }
                 }
+            }
+            catch (HttpRequestException e)
+            {
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine("***Connpass Error***: {0}\n{1}\n{2}", e.Source, e.Message, e.InnerException);
+#endif
+                return null;
             }
             catch (Exception e)
             {

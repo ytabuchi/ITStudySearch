@@ -25,7 +25,7 @@ namespace ITStudySearch.Models
 
             // ATND は ymd に取得するすべての yyyyMMdd を , で接続します。
             var sb = new StringBuilder();
-            sb.Append("format=json&ymd=");
+            sb.Append("format=json&count=50&ymd=");
 
             for (int i = 0; i < diffDays; i++)
             {

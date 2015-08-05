@@ -3,67 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Forms;
-using ITStudySearch.WinPhone81;
-using Windows.Storage;
 using System.IO;
+using Windows.Storage;
+using Xamarin.Forms;
+using ITStudySearch.WinPhone;
 
-[assembly: Dependency(typeof(SaveAndLoad_WinPhone81))]
+[assembly: Dependency(typeof(SaveAndLoad_WinPhone))]
 
-namespace ITStudySearch.WinPhone81
+namespace ITStudySearch.WinPhone
 {
-    class SaveAndLoad_WinPhone81 : ISaveAndLoad
+    class SaveAndLoad_WinPhone : ISaveAndLoad
     {
         public string LoadData(string filename)
         {
             var task = LoadDataAsync(filename);
-            //task.Wait(); // HACK: to keep Interface return types simple (sorry!)
-            //return task.Result;
-
-            #region
-            try
-            {
-                task.Wait(); // HACK: to keep Interface return types simple (sorry!)
-                return task.Result;
-            }
-            catch (AggregateException e)
-            {
-#if DEBUG
-                foreach (var inner in e.InnerExceptions)
-                {
-                    System.Diagnostics.Debug.WriteLine(inner.Message);
-                    System.Diagnostics.Debug.WriteLine("Type : {0}", inner.GetType());
-                }
-                return null;
-#endif
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-            #endregion
-
+            task.Wait(); // HACK: to keep Interface return types simple (sorry!)
+            return task.Result;
         }
         async Task<string> LoadDataAsync(string filename)
         {
             var local = Windows.Storage.ApplicationData.Current.LocalFolder;
             try
             {
-                var file = await local.OpenStreamForReadAsync(filename);
-                using (StreamReader streamReader = new StreamReader(file))
+                var file = await local.GetItemAsync(filename);
+                using (StreamReader streamReader = new StreamReader(file.Path))
                 {
                     var text = streamReader.ReadToEnd();
                     return text;
                 }
             }
-            catch (Exception e)
+            catch (FileNotFoundException e)
             {
-#if DEBUG
-                System.Diagnostics.Debug.WriteLine(e.InnerException);
-#endif
                 return "";
             }
 
+
+            //if (local != null)
+            //{
+            //    var file = await local.GetItemAsync(filename);
+            //    using (StreamReader streamReader = new StreamReader(file.Path))
+            //    {
+            //        var text = streamReader.ReadToEnd();
+            //        return text;
+            //    }
+            //}
+            //return "";
         }
         public async void SaveData(string filename, string text)
         {

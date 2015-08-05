@@ -18,6 +18,7 @@ namespace ITStudySearch.Models
         public DateTime start_at { get; set; }
         public DateTime? end_at { get; set; }
         public string description { get; set; }
+        public string overview { get; set; }
         public string address { get; set; }
         public string city { get; set; }
         public int accepted { get; set; }

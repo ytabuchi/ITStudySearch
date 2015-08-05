@@ -68,6 +68,7 @@ namespace ITStudySearch.Views
             };
             contentLabel.SetBinding(Label.TextProperty,
                 new Binding("description", converter: new HtmlToPlainConverter(), converterParameter: "100"));
+            //contentLabel.SetBinding(Label.TextProperty, "overview");
 
 
 

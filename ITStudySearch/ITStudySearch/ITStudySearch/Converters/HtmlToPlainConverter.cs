@@ -24,16 +24,16 @@ namespace ITStudySearch.Converters
             // parameter には数字が入りますので、数値があればその文字数でカットした string を返します。
             int strLength;
             if (int.TryParse(parameter as string, out strLength)) {
-
-                return doc.Substring(0, strLength) + "…";
+                if (doc.Length > strLength)
+                {
+                    return doc.Substring(0, strLength) + "…";
+                }
+                return doc;
             }
             else
             {
                 return doc;
             }
-                
-            //    strLength = 200;
-            //return doc.Replace("&hellip;", "…");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

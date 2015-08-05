@@ -20,20 +20,20 @@ namespace ITStudySearch.Views
 
             // json データがあれば読み込み、デシリアライズして vm に設定します。
             var data = DependencyService.Get<ISaveAndLoad>().LoadData("settings.json");
-            this.vm = data == null ? new AreaSettingPageViewModel() : JsonConvert.DeserializeObject<AreaSettingPageViewModel>(data);
+            this.vm = string.IsNullOrEmpty(data) ? new AreaSettingPageViewModel() : JsonConvert.DeserializeObject<AreaSettingPageViewModel>(data);
             this.BindingContext = vm;
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            SaveDataToJson();
+            SaveDataToJson(vm);
         }
 
         /// <summary>
         /// vm のインスタンスを json にシリアライズして保存するメソッドです。
         /// </summary>
-        private void SaveDataToJson()
+        private void SaveDataToJson(AreaSettingPageViewModel vm)
         {
             var json = JsonConvert.SerializeObject(vm);
             DependencyService.Get<ISaveAndLoad>().SaveData("settings.json", json);

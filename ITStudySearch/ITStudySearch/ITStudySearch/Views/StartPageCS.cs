@@ -13,7 +13,7 @@ namespace ITStudySearch.Views
 {
     public class StartPageCS : ContentPage
     {
-        GetAtndJson gaj = new GetAtndJson();
+        public GetAtndJson gaj = new GetAtndJson();
         GetConnpassJson gcj = new GetConnpassJson();
         GetDoorkeeperJson gdj = new GetDoorkeeperJson();
         List<string> cities;
@@ -91,12 +91,13 @@ namespace ITStudySearch.Views
                 Content = new StackLayout
                 {
                     Opacity = 1d,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand,
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
                     Children =
                     {
                         new ActivityIndicator
                         {
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
                             IsRunning = true,
                             Color = Color.White,
                         }
@@ -115,7 +116,7 @@ namespace ITStudySearch.Views
             listViewCS.ItemTapped += listViewCS_ItemTapped;
 
 
-            Title = " IT 勉強会検索";
+            Title = "IT 勉強会検索";
 
             #region ToolbarItems
 
@@ -173,7 +174,7 @@ namespace ITStudySearch.Views
         async void listViewCS_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             listViewCS.SelectedItem = null;
-            //await Navigation.PushAsync(new DetailPageCS(e.Item as RootObject.Post));
+            await Navigation.PushAsync(new DetailPageCS(e.Item as AllEventsInfo));
         }
 
         private async void SearchButton_Clicked(object sender, EventArgs e)
@@ -195,7 +196,7 @@ namespace ITStudySearch.Views
             {
                 this.listViewCS.ItemsSource = null;
                 this.listViewCS.IsVisible = false;
-                await this.DisplayAlert("検索結果", "検索結果は 0 件です。\n日付や地域を変更して再度お試しください。", "OK");
+                await this.DisplayAlert("検索結果", "検索結果は 0 件です。\nネットワークの問題の可能性もあります。\nネットワークの設定を確認いただくか、日付や地域を変更して再度お試しください。", "OK");
             }
 
             this.waitingLayerCS.IsVisible = false;
@@ -204,6 +205,7 @@ namespace ITStudySearch.Views
 
         private async Task<List<AllEventsInfo>> GetJsonData(DateTime from, DateTime to)
         {
+            allEventsInfo.Clear();
 
             var ConnpassTask = gcj.GetConnpassJsonAsync(from, to);
             var AtndTask = gaj.GetAtndJsonAsync(from, to);
@@ -213,80 +215,16 @@ namespace ITStudySearch.Views
             var atndResult = await AtndTask;
             var doorkeeperResult = await DoorkeeperTask;
 
-            //var connpassResult = await gcj.GetConnpassJsonAsync(from, to);
-            //var atndResult = await gaj.GetAtndJsonAsync(from, to);
-            //var doorkeeperResult = await gdj.GetDoorkeeperJsonAsync(from, to);
-
+            if (atndResult == null || connpassResult == null || doorkeeperResult == null)
+                await this.DisplayAlert("Error", "何かのサイトでエラーです", "OK");
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine(connpassResult != null ? "Connpass OK" : "Connpass NG");
-            System.Diagnostics.Debug.WriteLine(atndResult != null ? "Atnd OK" : "Atnd NG");
-            //System.Diagnostics.Debug.WriteLine(doorkeeperResult != null ? "Doorkeeper OK" : "Doorkeeper NG");
+            System.Diagnostics.Debug.WriteLine(connpassResult != null ? $"Connpass OK: {connpassResult.events.Count}件" : "Connpass NG");
+            System.Diagnostics.Debug.WriteLine(atndResult != null ? $"Atnd OK: {atndResult.events.Count}件" : "Atnd NG");
+            System.Diagnostics.Debug.WriteLine(doorkeeperResult != null ? $"Doorkeeper OK: {doorkeeperResult.Count}件" : "Doorkeeper NG");
 #endif
 
-            ChooseCity();
-
-
-            //if (atndResult == null || connpassResult == null || doorkeeperResult == null)
-            //    await this.DisplayAlert("Error", "何かのサイトでエラーです", "OK");
-
-            //var allEventsInfo = (
-            //    from x in connpassResult.events
-            //    where cities.Any(y => SpecifyCity.GetCity(x.address) == y)
-            //    select new AllEventsInfo
-            //    {
-            //        site = "connpass100.png",
-            //        title = x.title,
-            //        event_uri = x.event_url,
-            //        start_at = x.started_at,
-            //        end_at = x.ended_at,
-            //        description = x.description,
-            //        address = x.address,
-            //        city = SpecifyCity.GetCity(x.address),
-            //        accepted = x.accepted,
-            //        limit = x.limit,
-            //    }).Union(
-            //    from x in atndResult.events
-            //    where !(x._event.title.Contains("恋活") ||
-            //    x._event.title.Contains("婚活") ||
-            //    x._event.title.Contains("パーティ") ||
-            //    x._event.title.Contains("Party") ||
-            //    x._event.title.Contains("副業") ||
-            //    x._event.title.Contains("起業") ||
-            //    x._event.title.Contains("グルメ"))
-            //    where cities.Any(y => SpecifyCity.GetCity(x._event.address) == y)
-            //    select new AllEventsInfo
-            //    {
-            //        site = "atnd100.png",
-            //        title = x._event.title,
-            //        event_uri = x._event.event_url,
-            //        start_at = x._event.started_at,
-            //        end_at = x._event.ended_at,
-            //        description = x._event.description,
-            //        address = x._event.address,
-            //        city = SpecifyCity.GetCity(x._event.address),
-            //        accepted = x._event.accepted,
-            //        limit = x._event.limit,
-            //    }).Union(
-            //    from x in doorkeeperResult
-            //    where cities.Any(y => SpecifyCity.GetCity(x._event.address) == y)
-            //    select new AllEventsInfo
-            //    {
-            //        site = "doorkeeper100.png",
-            //        title = x._event.title,
-            //        event_uri = x._event.public_url,
-            //        start_at = x._event.starts_at,
-            //        end_at = x._event.ends_at,
-            //        description = x._event.description,
-            //        address = x._event.address,
-            //        city = SpecifyCity.GetCity(x._event.address),
-            //        accepted = x._event.participants,
-            //        limit = x._event.ticket_limit,
-            //    }).OrderBy(all => all.start_at).ToList();
-
-
-
             #region フェッチデータ
-            
+            ChooseCity();
 
             if (connpassResult != null)
             {
@@ -300,6 +238,8 @@ namespace ITStudySearch.Views
                                     start_at = x.started_at,
                                     end_at = x.ended_at,
                                     description = x.description,
+                                    //description = GetPlainDescription(x.description, 0),
+                                    //overview = GetPlainDescription(x.description, 100),
                                     address = x.address,
                                     city = SpecifyCity.GetCity(x.address),
                                     accepted = x.accepted,
@@ -327,6 +267,8 @@ namespace ITStudySearch.Views
                                 start_at = x._event.started_at,
                                 end_at = x._event.ended_at,
                                 description = x._event.description,
+                                //description = GetPlainDescription(x._event.description, 0),
+                                //overview = GetPlainDescription(x._event.description, 100),
                                 address = x._event.address,
                                 city = SpecifyCity.GetCity(x._event.address),
                                 accepted = x._event.accepted,
@@ -335,25 +277,27 @@ namespace ITStudySearch.Views
                 allEventsInfo.AddRange(atndInfo);
             }
 
-            //if (doorkeeperResult != null)
-            //{
-            //    var doorkeeperInfo = (from x in doorkeeperResult
-            //                      where cities.Any(y => SpecifyCity.GetCity(x._event.address) == y)
-            //                      select new AllEventsInfo
-            //                      {
-            //                          site = "doorkeeper100.png",
-            //                          title = x._event.title,
-            //                          event_uri = x._event.public_url,
-            //                          start_at = x._event.starts_at,
-            //                          end_at = x._event.ends_at,
-            //                          description = x._event.description,
-            //                          address = x._event.address,
-            //                          city = SpecifyCity.GetCity(x._event.address),
-            //                          accepted = x._event.participants,
-            //                          limit = x._event.ticket_limit,
-            //                      }).ToList();
-            //    allEventsInfo.AddRange(doorkeeperInfo);
-            //}
+            if (doorkeeperResult != null)
+            {
+                var doorkeeperInfo = (from x in doorkeeperResult
+                                      where cities.Any(y => SpecifyCity.GetCity(x._event.address) == y)
+                                      select new AllEventsInfo
+                                      {
+                                          site = "doorkeeper100.png",
+                                          title = x._event.title,
+                                          event_uri = x._event.public_url,
+                                          start_at = x._event.starts_at,
+                                          end_at = x._event.ends_at,
+                                          description = x._event.description,
+                                          //description = GetPlainDescription(x._event.description, 0),
+                                          //overview = GetPlainDescription(x._event.description, 100),
+                                          address = x._event.address,
+                                          city = SpecifyCity.GetCity(x._event.address),
+                                          accepted = x._event.participants,
+                                          limit = x._event.ticket_limit,
+                                      }).ToList();
+                allEventsInfo.AddRange(doorkeeperInfo);
+            }
 
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"All Event: {allEventsInfo.Count()}件");
@@ -373,6 +317,26 @@ namespace ITStudySearch.Views
             #endregion
 
         }
+
+        #region AllEventsInfo に入れる前に変換しようと思った
+        //private string GetPlainDescription(string htmltext, int length)
+        //{
+        //    try
+        //    {
+        //        var hap = new HtmlAgilityPack.HtmlDocument();
+        //        hap.LoadHtml(htmltext);
+        //        var doc = (length == 0 || hap.DocumentNode.InnerText.Length < length) ? 
+        //            hap.DocumentNode.InnerText : hap.DocumentNode.InnerText.Substring(0, (length)) + "…";
+        //        return doc;
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+            
+        //}
+        #endregion
 
         void ChooseCity()
         {

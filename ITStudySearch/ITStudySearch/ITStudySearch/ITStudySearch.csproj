@@ -41,16 +41,17 @@
     <Compile Include="Models\ConnpassJson.cs" />
     <Compile Include="Models\DoorkeeperJson.cs" />
     <Compile Include="Models\AllEventsInfo.cs" />
+    <Compile Include="Models\GetAllEventsInfo.cs" />
     <Compile Include="Models\GetAtndJson.cs" />
     <Compile Include="Models\GetConnpassJson.cs" />
     <Compile Include="Models\GetDoorkeeperJson.cs" />
-    <Compile Include="Models\SpecifyArea.cs" />
     <Compile Include="Models\SpecifyCity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AreaSettingPageViewModel.cs" />
     <Compile Include="Views\AreaSettingPageXaml.xaml.cs">
       <DependentUpon>AreaSettingPageXaml.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DetailPageCS.cs" />
     <Compile Include="Views\EventCell.cs" />
     <Compile Include="Views\StartPageCS.cs" />
   </ItemGroup>

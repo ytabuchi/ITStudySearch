@@ -11,6 +11,21 @@ namespace ITStudySearch.Models
 {
     class GetDoorkeeperJson
     {
+        List<DoorkeeperJson> res = new List<DoorkeeperJson>();
+
+        /// <summary>
+        /// Web サービス標準の出力順序で先頭から json データを取得します。
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public async Task<List<DoorkeeperJson>> GetDoorkeeperJsonAsync(int n)
+        {
+            var uri = new Uri(string.Format("http://api.doorkeeper.jp/events/?expand[]=group&page=" + n));
+
+            res = await GetJsonAsync(uri);
+            return res;
+        }
+
         /// <summary>
         /// 日付から json データを取得します。
         /// </summary>
@@ -23,10 +38,14 @@ namespace ITStudySearch.Models
             var subUri = string.Format("since={0}&until={1}",
                 from.ToString("yyyyMMdd"), to.ToString("yyyyMMdd"));
 
-            var uri = new Uri(string.Format("http://api.doorkeeper.jp/events/?" + subUri));
-//#if DEBUG
-//            uri = new Uri("http://api.doorkeeper.jp/events/?since=20150710&until=20150711");
-//#endif
+            var uri = new Uri(string.Format("http://api.doorkeeper.jp/events/?expand[]=group&" + subUri));
+
+            res = await GetJsonAsync(uri);
+            return res;
+        }
+
+        private async Task<List<DoorkeeperJson>> GetJsonAsync(Uri uri)
+        {
             try
             {
                 using (var client = new HttpClient())
@@ -40,8 +59,9 @@ namespace ITStudySearch.Models
                         {
                             var str = await streamReader.ReadToEndAsync();
                             var json = str.Replace("\"event\"", "\"_event\"").Replace("long", "_long");
-                            var res = JsonConvert.DeserializeObject<List<DoorkeeperJson>>(
+                            res = JsonConvert.DeserializeObject<List<DoorkeeperJson>>(
                                 json, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                            // starts_at と ends_at が UTC で返ってくるための処理を追加
                             foreach (var item in res)
                             {
                                 item._event.starts_at = item._event.starts_at.AddHours(9);

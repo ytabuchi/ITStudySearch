@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace ITStudySearch.Models
 {
-    public static class SpecifyCity
+    static class SpecifyCity
     {
         /// <summary>
         /// 住所から都道府県を特定するメソッドです。
@@ -30,6 +30,7 @@ namespace ITStudySearch.Models
             const string kanagawaRegex = "(横浜市|川崎市|相模原市|横須賀市|平塚市|鎌倉市|藤沢市|小田原市|茅ヶ崎市|逗子市|三浦市|秦野市|厚木市|大和市|伊勢原市|海老名市|座間市|南足柄市|綾瀬市)";
             const string aichiRegex = "(名古屋市|一宮市|瀬戸市|春日井市|犬山市|江南市|小牧市|稲沢市|尾張旭市|岩倉市|豊明市|日進市|清須市|北名古屋市|長久手市|津島市|愛西市|弥富市|あま市|大治町|半田市|常滑市|東海市|大府市|知多市|岡崎市|碧南市|刈谷市|豊田市|安城市|西尾市|知立市|高浜市|みよし市|豊橋市|豊川市|蒲郡市|新城市|田原市)";
             const string hyogoRegex = "(神戸市|尼崎市|西宮市|芦屋市|伊丹市|宝塚市|川西市|三田市|明石市|加古川市|高砂市|西脇市|三木市|小野市|加西市|加東市|姫路市|相生市|たつの市|赤穂市|宍粟市|豊岡市|養父市|朝来市|篠山市|丹波市|洲本市|南あわじ市|淡路市)";
+            const string hokkaidoRegex = "(札幌市|旭川市|函館市|釧路市|苫小牧市|帯広市|小樽市|北見市|江別市)";
 
             // address に都道府県が含まれていれば都道府県名を返し、それ以外で各正規表現に該当すればそれぞれの県名を返します。
             Match m;
@@ -46,6 +47,8 @@ namespace ITStudySearch.Models
                 city = "愛知県";
             else if (Regex.IsMatch(address, hyogoRegex))
                 city = "兵庫県";
+            else if (Regex.IsMatch(address, hokkaidoRegex))
+                city = "北海道";
             else if (Regex.IsMatch(address, tokyoRegex))
                 city = "東京都";
             else city = "その他";

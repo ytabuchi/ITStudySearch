@@ -26,22 +26,20 @@ namespace ITStudySearch.Views
 
             var titleLabel = new Label
             {
-                TextColor = Color.FromHex("22638e"),
-                FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
+                Style = Application.Current.Resources["TitleLabel"] as Style,
             };
-            titleLabel.SetBinding(Label.TextProperty, "title");
+            titleLabel.SetBinding(Label.TextProperty, "Title");
 
             var dateLabel = new Label
             {
-                TextColor = Color.FromHex("777"),
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
             };
             dateLabel.SetBinding(Label.TextProperty,
-                new Binding("start_at", stringFormat: "日時： {0:yyyy/M/d HH:mm} ～"));
-
+                new Binding("Start_at", stringFormat: "日時： {0:yyyy/M/d HH:mm} ～"));
             var numberLabel = new Label
             {
                 Text = "人数： ",
-                TextColor = Color.FromHex("777"),
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
                 YAlign = TextAlignment.End,
             };
             var acceptLabel = new Label
@@ -51,45 +49,43 @@ namespace ITStudySearch.Views
                 YAlign = TextAlignment.End,
             };
             acceptLabel.SetBinding(Label.TextProperty,
-                new Binding("accepted", stringFormat: "{0} "));
+                new Binding("Accepted", stringFormat: "{0} "));
             var limitLabel = new Label
             {
-                TextColor = Color.FromHex("777"),
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
                 YAlign = TextAlignment.End,
             };
-            limitLabel.SetBinding(Label.TextProperty, "limit", stringFormat: " / {0}");
-
+            limitLabel.SetBinding(Label.TextProperty, "Limit", stringFormat: " / {0}");
             var addressLabel = new Label
             {
-                TextColor = Color.FromHex("777"),
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
                 LineBreakMode = LineBreakMode.TailTruncation,
             };
-            addressLabel.SetBinding(Label.TextProperty, "address", stringFormat: "場所： {0}");
-
+            addressLabel.SetBinding(Label.TextProperty, "Address", stringFormat: "場所： {0}");
+            var organizerLabel = new Label
+            {
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+            };
+            organizerLabel.SetBinding(Label.TextProperty, "Organizer", stringFormat: "主催者： {0}");
             var siteImage = new Image
             {
                 WidthRequest = 40,
             };
-            siteImage.SetBinding(Image.SourceProperty, "site");
-
+            siteImage.SetBinding(Image.SourceProperty, "Site");
             var urlLabel = new Label
             {
                 FontSize = 20,
                 LineBreakMode = LineBreakMode.TailTruncation,
                 TextColor = Color.FromHex("425fc9"),
             };
-            urlLabel.SetBinding(Label.TextProperty, "event_uri");
+            urlLabel.SetBinding(Label.TextProperty, "Event_uri");
             urlLabel.GestureRecognizers.Add(tap);
 
-            var contentLabel = new Label
-            {
-                TextColor = Color.FromHex("444"),
-            };
+            var contentLabel = new Label { };
             contentLabel.SetBinding(Label.TextProperty,
-                new Binding("description", converter: new HtmlToPlainConverter()));
+                new Binding("Description", converter: new HtmlToPlainConverter()));
 
-
-            Title = items.title;
+            Title = items.Title;
             Content = new ScrollView
             {
                 Padding = 15,
@@ -100,7 +96,6 @@ namespace ITStudySearch.Views
                             titleLabel,
                             new BoxView
                             {
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                 Color = Color.FromHex("e2e2e2"),
                                 HeightRequest = 1,
                             },
@@ -116,6 +111,7 @@ namespace ITStudySearch.Views
                                 }
                             },
                             addressLabel,
+                            organizerLabel,
                             new StackLayout
                             {
                                 Orientation = StackOrientation.Horizontal,

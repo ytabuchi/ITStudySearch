@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Resources;
 using System.Windows;
 using System.Windows.Markup;
@@ -34,6 +35,7 @@ namespace ITStudySearch.WinPhone
 
             // Language display initialization
             InitializeLanguage();
+            RootFrame.Language = XmlLanguage.GetLanguage(CultureInfo.CurrentUICulture.Name);
 
             // Show graphics profiling information while debugging.
             if (Debugger.IsAttached)

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 using ITStudySearch.Models;
@@ -13,40 +15,59 @@ namespace ITStudySearch.Views
 {
     public class StartPageCS : ContentPage
     {
-        public GetAtndJson gaj = new GetAtndJson();
+        bool flag; // 通常フェッチ は true
+        int n = 0;
         GetConnpassJson gcj = new GetConnpassJson();
+        GetAtndJson gaj = new GetAtndJson();
         GetDoorkeeperJson gdj = new GetDoorkeeperJson();
-        List<string> cities;
-        AreaSettingPageViewModel vm;
-        List<AllEventsInfo> allEventsInfo = new List<AllEventsInfo>();
+        GetZusaarJson gzj = new GetZusaarJson();
 
-        //List<AllEventsInfo> connpassInfo, atndInfo, doorkeeperInfo, allEventsInfo = new List<AllEventsInfo>();
+        FilterConnpassData fcd = new FilterConnpassData();
+        FilterAtndData fad = new FilterAtndData();
+        FilterDoorkeeperData fdd = new FilterDoorkeeperData();
+        FilterZusaarData fzd = new FilterZusaarData();
+
+        HashSet<string> cities;
+        HashSet<string> ngWordsList;
+        //List<string> ngWords;
+        AreaSettingPageViewModel vm;
+        //ObservableCollection<AllEventsInfo> allEventsInfo = new ObservableCollection<AllEventsInfo>();
+        public ObservableCollection<AllEventsInfo> allEventsInfo { get; set; }
+
         DatePicker dateFrom;
         DatePicker dateTo;
-        ListView listViewCS;
+        ListView list;
         StackLayout searchLayer;
-        ContentView waitingLayerCS;
+        ContentView waitingLayout;
 
         public StartPageCS()
         {
-            #region 日付指定レイヤー searchLayer
+            this.allEventsInfo = new ObservableCollection<AllEventsInfo>();
+            cities = new HashSet<string>();
+            ChooseCity();
+            var ngWords = new NGWords();
+            string[] strArray = { "機会学習", "渋谷", "カラオケ" };
+            ngWords.SetNGWords(strArray);
+            ngWordsList = ngWords.GetNGWords();
+
+            
+
+            #region // 日付指定レイヤー searchLayer
 
             dateFrom = new DatePicker
             {
                 Date = DateTime.Now,
                 Format = "M/d",
-                WidthRequest = 65,
-                //VerticalOptions = LayoutOptions.Center,
+                WidthRequest = Device.OnPlatform(75, 75, 120),
             };
             dateTo = new DatePicker
             {
                 Date = DateTime.Now.AddDays(2),
                 Format = "M/d",
-                WidthRequest = 65,
+                WidthRequest = Device.OnPlatform(75, 75, 120),
                 MinimumDate = dateFrom.Date,
-                //VerticalOptions = LayoutOptions.Center,
             };
-            dateFrom.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) =>
+            dateFrom.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
             {
                 if (dateFrom.Date > dateTo.Date)
                     dateTo.Date = dateFrom.Date.AddDays(2);
@@ -67,6 +88,7 @@ namespace ITStudySearch.Views
 
             searchLayer = new StackLayout
             {
+                IsVisible = false,
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.Center,
                 Children =
@@ -79,44 +101,17 @@ namespace ITStudySearch.Views
             };
             #endregion
 
-            #region クルクルレイヤー waitingLayerCS
+            // クルクルレイヤー waitingLayout
+            waitingLayout = new WaitingLayout();
 
-            waitingLayerCS = new ContentView
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                IsVisible = false,
-                BackgroundColor = Color.Black,
-                Opacity = 0.6d,
-                Content = new StackLayout
-                {
-                    Opacity = 1d,
-                    HorizontalOptions = LayoutOptions.CenterAndExpand,
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
-                    Children =
-                    {
-                        new ActivityIndicator
-                        {
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            IsRunning = true,
-                            Color = Color.White,
-                        }
-                    }
-                }
-            };
-
-            #endregion
-
-            listViewCS = new ListView
+            list = new ListView
             {
                 HasUnevenRows = true,
-                IsVisible = false,
                 ItemTemplate = new DataTemplate(typeof(EventCell)), // PostCell テンプレート
+                ItemsSource = allEventsInfo,
             };
-            listViewCS.ItemTapped += listViewCS_ItemTapped;
-
-
-            Title = "IT 勉強会検索";
+            list.ItemTapped += list_ItemTapped;
+            list.ItemAppearing += List_ItemAppearing;
 
             #region ToolbarItems
 
@@ -126,7 +121,7 @@ namespace ITStudySearch.Views
             //    Text = "絞り込み検索",
             //    Command = new Command(() =>
             //    {
-            //        this.DisplayAlert("絞り込み検索", "test box が欲しい", "絞り込み");
+            //        this.DisplayAlert("絞り込み検索", "Android で SearchBox が動作しません", "閉じる");
             //    })
             //});
             ToolbarItems.Add(new ToolbarItem
@@ -149,163 +144,131 @@ namespace ITStudySearch.Views
             {
                 Icon = "Setting.png",
                 Text = "設定",
-                Command = new Command(() => Navigation.PushAsync(new AreaSettingPageXaml())),
+                
+                Command = new Command(() => {
+                    allEventsInfo.Clear();
+                    //list.ItemsSource = allEventsInfo;
+                    Navigation.PushAsync(new SettingPageCS());
+                    }),
+
             });
 
             #endregion
 
+            Title = " IT 勉強会検索";
             Content = new StackLayout
             {
                 Children = {
                     searchLayer,
-                    waitingLayerCS,
-                    listViewCS,
+                    list,
+                    waitingLayout,
                 },
             };
         }
 
+        /// <summary>
+        /// ページ表示時に allEventInfo にデータが無ければ取得します。
+        /// </summary>
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("StartPage Appearing");
+#endif
+            if (allEventsInfo.Count == 0)
+            {
+                waitingLayout.IsVisible = true;
 
+                allEventsInfo = await GetJsonData(n);
+                if (allEventsInfo == null)
+                    await DisplayAlert("Error", "すべてのサイトが死んでるかネットワークエラーです。\nネットワークの設定を確認してみてください。", "OK");
+                n++;
+                list.ItemsSource = allEventsInfo;
+                waitingLayout.IsVisible = false;
+            }
+        }
 
         /// <summary>
-        /// ListView の Item Tap メソッドです。
+        /// ListView の最後が表示されたら追加分を取得するメソッドです。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        async void listViewCS_ItemTapped(object sender, ItemTappedEventArgs e)
+        private async void List_ItemAppearing(object sender, ItemVisibilityEventArgs e)
         {
-            listViewCS.SelectedItem = null;
-            await Navigation.PushAsync(new DetailPageCS(e.Item as AllEventsInfo));
+            if (allEventsInfo.Last() == e.Item as AllEventsInfo && flag)
+            {
+                waitingLayout.IsVisible = true;
+
+                allEventsInfo = await GetJsonData(n);
+                if (allEventsInfo == null)
+                    await DisplayAlert("Error", "すべてのサイトが死んでるかネットワークエラーです。\nネットワークの設定を確認してみてください。", "OK");
+                n++;
+                list.ItemsSource = allEventsInfo;
+
+                waitingLayout.IsVisible = false;
+            }
+
         }
 
+        /// <summary>
+        /// SearchButton クリック時のメソッドです。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void SearchButton_Clicked(object sender, EventArgs e)
         {
-            List<AllEventsInfo> data = null;
-
-            this.searchLayer.IsVisible = false;
-            this.listViewCS.IsVisible = false;
-            this.waitingLayerCS.IsVisible = true;
-
-            data = await GetJsonData(dateFrom.Date, dateTo.Date);
-            if (data.Count > 0)
-            {
-                this.listViewCS.ItemsSource = data;
-                this.listViewCS.ScrollTo(data[0], ScrollToPosition.Start, false);
-                this.listViewCS.IsVisible = true;
-            }
-            else
-            {
-                this.listViewCS.ItemsSource = null;
-                this.listViewCS.IsVisible = false;
-                await this.DisplayAlert("検索結果", "検索結果は 0 件です。\nネットワークの問題の可能性もあります。\nネットワークの設定を確認いただくか、日付や地域を変更して再度お試しください。", "OK");
-            }
-
-            this.waitingLayerCS.IsVisible = false;
-            
-        }
-
-        private async Task<List<AllEventsInfo>> GetJsonData(DateTime from, DateTime to)
-        {
+            searchLayer.IsVisible = false;
             allEventsInfo.Clear();
 
-            var ConnpassTask = gcj.GetConnpassJsonAsync(from, to);
-            var AtndTask = gaj.GetAtndJsonAsync(from, to);
-            var DoorkeeperTask = gdj.GetDoorkeeperJsonAsync(from, to);
+            waitingLayout.IsVisible = true;
+            allEventsInfo = await GetJsonData(dateFrom.Date, dateTo.Date);
+            if (allEventsInfo == null)
+                await DisplayAlert("Error", "すべてのサイトが死んでるかネットワークエラーです。\nネットワークの設定を確認してみてください。", "OK");
+            list.ItemsSource = allEventsInfo;
+            waitingLayout.IsVisible = false;
+        }
+
+        /// <summary>
+        /// Json データをパラメーターを指定せずに 25件ずつ取得していきます。
+        /// </summary>
+        /// <param name="n">1回取得毎にインクリメント</param>
+        /// <returns></returns>
+        private async Task<ObservableCollection<AllEventsInfo>> GetJsonData(int n)
+        {
+            flag = true;
+            var ConnpassTask = gcj.GetConnpassJsonAsync(1 + n * 25);
+            var AtndTask = gaj.GetAtndJsonAsync(1 + n * 25);
+            var DoorkeeperTask = gdj.GetDoorkeeperJsonAsync(1 + n);
+            var ZusaarTask = gzj.GetZusaarJsonAsync(1 + n * 25);
 
             var connpassResult = await ConnpassTask;
             var atndResult = await AtndTask;
             var doorkeeperResult = await DoorkeeperTask;
+            var zusaarResult = await ZusaarTask;
 
-            if (atndResult == null || connpassResult == null || doorkeeperResult == null)
-                await this.DisplayAlert("Error", "何かのサイトでエラーです", "OK");
+            if (atndResult == null && connpassResult == null && doorkeeperResult == null && zusaarResult == null)
+                return null;
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(connpassResult != null ? $"Connpass OK: {connpassResult.events.Count}件" : "Connpass NG");
             System.Diagnostics.Debug.WriteLine(atndResult != null ? $"Atnd OK: {atndResult.events.Count}件" : "Atnd NG");
             System.Diagnostics.Debug.WriteLine(doorkeeperResult != null ? $"Doorkeeper OK: {doorkeeperResult.Count}件" : "Doorkeeper NG");
+            System.Diagnostics.Debug.WriteLine(zusaarResult != null ? $"Zusaar OK: {zusaarResult._event.Count}件" : "Zusaar NG");
 #endif
 
             #region フェッチデータ
-            ChooseCity();
 
-            if (connpassResult != null)
-            {
-                var connpassInfo = (from x in connpassResult.events
-                                where cities.Any(y => SpecifyCity.GetCity(x.address) == y)
-                                select new AllEventsInfo
-                                {
-                                    site = "connpass100.png",
-                                    title = x.title,
-                                    event_uri = x.event_url,
-                                    start_at = x.started_at,
-                                    end_at = x.ended_at,
-                                    description = x.description,
-                                    //description = GetPlainDescription(x.description, 0),
-                                    //overview = GetPlainDescription(x.description, 100),
-                                    address = x.address,
-                                    city = SpecifyCity.GetCity(x.address),
-                                    accepted = x.accepted,
-                                    limit = x.limit,
-                                }).ToList();
-                allEventsInfo.AddRange(connpassInfo);
-            }
-
-            if (atndResult != null)
-            {
-                var atndInfo = (from x in atndResult.events
-                            where !(x._event.title.Contains("恋活") ||
-                            x._event.title.Contains("婚活") ||
-                            x._event.title.Contains("パーティ") ||
-                            x._event.title.Contains("Party") ||
-                            x._event.title.Contains("副業") ||
-                            x._event.title.Contains("起業") ||
-                            x._event.title.Contains("グルメ"))
-                            where cities.Any(y => SpecifyCity.GetCity(x._event.address) == y)
-                            select new AllEventsInfo
-                            {
-                                site = "atnd100.png",
-                                title = x._event.title,
-                                event_uri = x._event.event_url,
-                                start_at = x._event.started_at,
-                                end_at = x._event.ended_at,
-                                description = x._event.description,
-                                //description = GetPlainDescription(x._event.description, 0),
-                                //overview = GetPlainDescription(x._event.description, 100),
-                                address = x._event.address,
-                                city = SpecifyCity.GetCity(x._event.address),
-                                accepted = x._event.accepted,
-                                limit = x._event.limit,
-                            }).ToList();
-                allEventsInfo.AddRange(atndInfo);
-            }
-
-            if (doorkeeperResult != null)
-            {
-                var doorkeeperInfo = (from x in doorkeeperResult
-                                      where cities.Any(y => SpecifyCity.GetCity(x._event.address) == y)
-                                      select new AllEventsInfo
-                                      {
-                                          site = "doorkeeper100.png",
-                                          title = x._event.title,
-                                          event_uri = x._event.public_url,
-                                          start_at = x._event.starts_at,
-                                          end_at = x._event.ends_at,
-                                          description = x._event.description,
-                                          //description = GetPlainDescription(x._event.description, 0),
-                                          //overview = GetPlainDescription(x._event.description, 100),
-                                          address = x._event.address,
-                                          city = SpecifyCity.GetCity(x._event.address),
-                                          accepted = x._event.participants,
-                                          limit = x._event.ticket_limit,
-                                      }).ToList();
-                allEventsInfo.AddRange(doorkeeperInfo);
-            }
+            fcd.FilterData(connpassResult, allEventsInfo, ngWordsList, cities);
+            fad.FilterData(atndResult, allEventsInfo, ngWordsList, cities);
+            fdd.FilterData(doorkeeperResult, allEventsInfo, ngWordsList, cities);
+            fzd.FilterData(zusaarResult, allEventsInfo, ngWordsList, cities);
 
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine($"All Event: {allEventsInfo.Count()}件");
+            System.Diagnostics.Debug.WriteLine($"All Events: {allEventsInfo.Count()}件");
 #endif
 
             if (allEventsInfo != null)
             {
-                allEventsInfo = allEventsInfo.OrderBy(e => e.start_at).ToList();
+                allEventsInfo = new ObservableCollection<AllEventsInfo>(allEventsInfo.OrderBy(e => e.Start_at));
                 return allEventsInfo;
             }
             else
@@ -318,32 +281,79 @@ namespace ITStudySearch.Views
 
         }
 
-        #region AllEventsInfo に入れる前に変換しようと思った
-        //private string GetPlainDescription(string htmltext, int length)
-        //{
-        //    try
-        //    {
-        //        var hap = new HtmlAgilityPack.HtmlDocument();
-        //        hap.LoadHtml(htmltext);
-        //        var doc = (length == 0 || hap.DocumentNode.InnerText.Length < length) ? 
-        //            hap.DocumentNode.InnerText : hap.DocumentNode.InnerText.Substring(0, (length)) + "…";
-        //        return doc;
-        //    }
-        //    catch (Exception)
-        //    {
+        /// <summary>
+        /// 指定日付のイベントを取得するメソッドです。
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        private async Task<ObservableCollection<AllEventsInfo>> GetJsonData(DateTime from, DateTime to)
+        {
+            flag = false;
+            var ConnpassTask = gcj.GetConnpassJsonAsync(from, to);
+            var AtndTask = gaj.GetAtndJsonAsync(from, to);
+            var DoorkeeperTask = gdj.GetDoorkeeperJsonAsync(from, to);
+            var ZusaarTask = gzj.GetZusaarJsonAsync(from, to);
 
-        //        throw;
-        //    }
-            
-        //}
-        #endregion
+            var connpassResult = await ConnpassTask;
+            var atndResult = await AtndTask;
+            var doorkeeperResult = await DoorkeeperTask;
+            var zusaarResult = await ZusaarTask;
 
+            if (atndResult == null && connpassResult == null && doorkeeperResult == null && zusaarResult == null)
+                return null;
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(connpassResult != null ? $"[DateTime]Connpass OK: {connpassResult.events.Count}件" : "[DateTime]Connpass NG");
+            System.Diagnostics.Debug.WriteLine(atndResult != null ? $"[DateTime]Atnd OK: {atndResult.events.Count}件" : "[DateTime]Atnd NG");
+            System.Diagnostics.Debug.WriteLine(doorkeeperResult != null ? $"[DateTime]Doorkeeper OK: {doorkeeperResult.Count}件" : "[DateTime]Doorkeeper NG");
+            System.Diagnostics.Debug.WriteLine(zusaarResult != null ? $"[DateTime]Zusaar OK: {zusaarResult._event.Count}件" : "[DateTime]Zusaar NG");
+#endif
+
+            #region フェッチデータ
+            fcd.FilterData(connpassResult, allEventsInfo, ngWordsList, cities);
+            fad.FilterData(atndResult, allEventsInfo, ngWordsList, cities);
+            fdd.FilterData(doorkeeperResult, allEventsInfo, ngWordsList, cities);
+            fzd.FilterData(zusaarResult, allEventsInfo, ngWordsList, cities);
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"All Event: {allEventsInfo.Count()}件");
+#endif
+
+            if (allEventsInfo != null)
+            {
+                allEventsInfo = new ObservableCollection<AllEventsInfo>(allEventsInfo.OrderBy(e => e.Start_at));
+                return allEventsInfo;
+            }
+            else
+            {
+                return null;
+            }
+            #endregion
+
+        }
+
+        /// <summary>
+        /// ListView の Item Tap メソッドです。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        async void list_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            list.SelectedItem = null;
+            await Navigation.PushAsync(new DetailPageCS(e.Item as AllEventsInfo));
+        }
+
+        /// <summary>
+        /// 抽出対象になっている都道府県を HashSet に入れるメソッドです。
+        /// </summary>
         void ChooseCity()
         {
             var data = DependencyService.Get<ISaveAndLoad>().LoadData("settings.json");
-            vm = data == null ? new AreaSettingPageViewModel() : JsonConvert.DeserializeObject<AreaSettingPageViewModel>(data);
-
-            cities = new List<string>();
+            //if (string.IsNullOrEmpty(data) || data == "null")
+            //    vm = new AreaSettingPageViewModel();
+            //else
+            //    vm = JsonConvert.DeserializeObject<AreaSettingPageViewModel>(data);
+            vm = (string.IsNullOrEmpty(data) || data == "null") ? new AreaSettingPageViewModel() : JsonConvert.DeserializeObject<AreaSettingPageViewModel>(data);
 
             #region 長すぎる…
 
@@ -445,7 +455,6 @@ namespace ITStudySearch.Views
                 cities.Add("その他");
             #endregion
         }
-
 
     }
 }

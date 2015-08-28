@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace ITStudySearch.ViewModels
 {
-    class AreaSettingPageViewModel : INotifyPropertyChanged
+    public class AreaSettingPageViewModel : INotifyPropertyChanged
     {
 
         #region 北海道エリア

@@ -13,28 +13,27 @@ namespace ITStudySearch.Views
     {
         public EventCell()
         {
-
+            #region 右側
             var titleLabel = new Label
             {
-                TextColor = Color.FromHex("22638e"),
-                FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)),
+                Style = Application.Current.Resources["TitleLabel"] as Style
             };
-            titleLabel.SetBinding(Label.TextProperty, "title");
+            titleLabel.SetBinding(Label.TextProperty, "Title");
 
 
             var timeLabel = new Label
             {
-                TextColor = Color.FromHex("777"),
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
                 HorizontalOptions = LayoutOptions.StartAndExpand,
                 YAlign = TextAlignment.End
             };
             timeLabel.SetBinding(Label.TextProperty,
-                new Binding("start_at", stringFormat: "時間： {0:HH:mm}～"));
+                new Binding("Start_at", stringFormat: "時間： {0:HH:mm}～"));
 
             var numberLabel = new Label
             {
                 Text = "人数： ",
-                TextColor = Color.FromHex("777"),
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
                 HorizontalOptions = LayoutOptions.End,
                 YAlign = TextAlignment.End,
             };
@@ -46,43 +45,78 @@ namespace ITStudySearch.Views
                 YAlign = TextAlignment.End,
             };
             acceptLabel.SetBinding(Label.TextProperty,
-                new Binding("accepted", stringFormat: "{0} "));
+                new Binding("Accepted", stringFormat: "{0} "));
             var limitLabel = new Label
             {
-                TextColor = Color.FromHex("777"),
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
                 HorizontalOptions = LayoutOptions.End,
                 YAlign = TextAlignment.End,
             };
-            limitLabel.SetBinding(Label.TextProperty, "limit", stringFormat: " / {0}");
+            limitLabel.SetBinding(Label.TextProperty, "Limit", stringFormat: " / {0}");
 
-            var addressLabel = new Label
+            //var addressLabel = new Label
+            //{
+            //    Style = Application.Current.Resources["SubColoredLabel"] as Style,
+            //    LineBreakMode = LineBreakMode.TailTruncation,
+            //};
+            //addressLabel.SetBinding(Label.TextProperty, "Address");
+
+            var contentLabel = new Label { };
+            //contentLabel.SetBinding(Label.TextProperty,
+            //    new Binding("description", converter: new HtmlToPlainConverter(), converterParameter: "100"));
+            contentLabel.SetBinding(Label.TextProperty, "Overview");
+
+            var rightStack = new StackLayout
             {
-                TextColor = Color.FromHex("777"),
-                LineBreakMode = LineBreakMode.TailTruncation,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Padding = new Thickness(10, 0, 10, 5),
+                Spacing = 10,
+                Children = {
+                            titleLabel,
+                            new BoxView
+                            {
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Color = Color.FromHex("e2e2e2"),
+                                HeightRequest = 1,
+                            },
+                            new StackLayout
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                Children =
+                                {
+                                    timeLabel,
+                                    numberLabel,
+                                    acceptLabel,
+                                    limitLabel,
+                                }
+                            },
+                            //addressLabel,
+                            new BoxView
+                            {
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Color = Color.FromHex("e2e2e2"),
+                                HeightRequest = 1,
+                            },
+                            contentLabel,
+                        },
             };
-            addressLabel.SetBinding(Label.TextProperty, "address");
-
-            var contentLabel = new Label
-            {
-                TextColor = Color.FromHex("444"),
-            };
-            contentLabel.SetBinding(Label.TextProperty,
-                new Binding("description", converter: new HtmlToPlainConverter(), converterParameter: "100"));
-            //contentLabel.SetBinding(Label.TextProperty, "overview");
+            #endregion
 
 
+            #region 左側
 
-            #region 左側の日付Box
-
+            #region 日付Box
+            // b3a0db
             var dMonth = new Label
             {
                 TextColor = Color.FromHex("fff"),
-                BackgroundColor = Color.FromHex("76bded"),
+                BackgroundColor = Color.FromHex("C0CA33"), // ColorAccent
                 FontSize = 14,
                 XAlign = TextAlignment.Center,
+                YAlign = TextAlignment.Center,
             };
             dMonth.SetBinding(Label.TextProperty,
-                new Binding("start_at", stringFormat: "{0:MM}"));
+                new Binding("Start_at", stringFormat: "{0:MM}"));
             var dDay = new Label
             {
                 TextColor = Color.FromHex("555"),
@@ -92,16 +126,17 @@ namespace ITStudySearch.Views
                 YAlign = TextAlignment.Center,
             };
             dDay.SetBinding(Label.TextProperty,
-                new Binding("start_at", stringFormat: "{0:dd}"));
+                new Binding("Start_at", stringFormat: "{0:dd}"));
             var dWeekDay = new Label
             {
-                TextColor = Color.FromHex("333"),
+                TextColor = Color.FromHex("555"),
                 BackgroundColor = Color.FromHex("e3e3e3"),
                 FontSize = 12,
                 XAlign = TextAlignment.Center,
+                YAlign = TextAlignment.Center,
             };
             dWeekDay.SetBinding(Label.TextProperty,
-                new Binding("start_at", stringFormat: "（{0:ddd}）"));
+                new Binding("Start_at", stringFormat: "（{0:ddd}）"));
 
             var dateGrid = new Grid
             {
@@ -129,18 +164,30 @@ namespace ITStudySearch.Views
 
             var cityLabel = new Label
             {
-                TextColor = Color.FromHex("444"),
+                //TextColor = Color.FromHex("444"),
                 FontSize = 14,
                 XAlign = TextAlignment.Center,
             };
-            cityLabel.SetBinding(Label.TextProperty, "city");
+            cityLabel.SetBinding(Label.TextProperty, "City");
 
             var siteImage = new Image
             {
                 WidthRequest = 40,
             };
-            siteImage.SetBinding(Image.SourceProperty, "site");
+            siteImage.SetBinding(Image.SourceProperty, "Site");
 
+            #endregion
+
+            var leftStack = new StackLayout
+            {
+                Spacing = 15,
+                Children =
+                {
+                    dateGrid,
+                    cityLabel,
+                    siteImage,
+                }
+            };
             #endregion
 
             var cell = new StackLayout
@@ -148,49 +195,8 @@ namespace ITStudySearch.Views
                 Orientation = StackOrientation.Horizontal,
                 Padding = 10,
                 Children = {
-                    new StackLayout
-                    {
-                        Spacing = 15,
-                        Children =
-                        {
-                            dateGrid,
-                            cityLabel,
-                            siteImage,
-                        }
-                    },
-                    new StackLayout
-                    {
-                        Padding = new Thickness(10, 0, 10, 5),
-                        Spacing = 10,
-                        Children = {
-                            titleLabel,
-                            new BoxView
-                            {
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Color = Color.FromHex("e2e2e2"),
-                                HeightRequest = 1,
-                            },
-                            new StackLayout
-                            {
-                                Orientation = StackOrientation.Horizontal,
-                                Children =
-                                {
-                                    timeLabel,
-                                    numberLabel,
-                                    acceptLabel,
-                                    limitLabel,
-                                }
-                            },
-                            addressLabel,
-                            new BoxView
-                            {
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                Color = Color.FromHex("e2e2e2"),
-                                HeightRequest = 1,
-                            },
-                            contentLabel,
-                        },
-                    },
+                    leftStack,
+                    rightStack
                 }
             };
 

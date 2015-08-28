@@ -11,6 +11,21 @@ namespace ITStudySearch.Models
 {
     public class GetAtndJson
     {
+        AtndJson res = new AtndJson();
+
+        /// <summary>
+        /// Web サービス標準の出力順序で先頭から json データを取得します。
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public async Task<AtndJson> GetAtndJsonAsync(int n)
+        {
+            var uri = new Uri(string.Format("http://api.atnd.org/events/?format=json&count=25&start=" + n));
+
+            res = await GetJsonAsync(uri);
+            return res;
+        }
+
         /// <summary>
         /// 日付から json データを取得します。
         /// </summary>
@@ -35,10 +50,13 @@ namespace ITStudySearch.Models
 
             var subUri = sb.ToString();
             var uri = new Uri(string.Format("http://api.atnd.org/events/?" + subUri));
-//#if DEBUG
-//            uri = new Uri("http://api.atnd.org/events/?format=json&count=10&ymd=20150710");
-//#endif
 
+            res = await GetJsonAsync(uri);
+            return res;
+        }
+
+        private async Task<AtndJson> GetJsonAsync(Uri uri)
+        {
             try
             {
                 using (var client = new HttpClient())
@@ -52,7 +70,7 @@ namespace ITStudySearch.Models
                         {
                             var str = await streamReader.ReadToEndAsync();
                             var json = str.Replace("\"event\"", "\"_event\"").Replace("catch", "_catch");
-                            var res = JsonConvert.DeserializeObject<AtndJson>(
+                            res = JsonConvert.DeserializeObject<AtndJson>(
                                 json, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
                             return res;
                         }
@@ -65,8 +83,8 @@ namespace ITStudySearch.Models
                 System.Diagnostics.Debug.WriteLine("***Atnd Error***: {0}\n{1}\n{2}", e.Source, e.Message, e.InnerException);
 #endif
                 return null;
+                //res = null;
             }
-
         }
     }
 }

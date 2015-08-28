@@ -11,18 +11,17 @@ namespace ITStudySearch.Models
     /// </summary>
     public class AllEventsInfo
     {
-        public string site { get; set; }
-        public string title { get; set; }
-        public string event_uri { get; set; }
-        //public string daystring { get; set; }
-        public DateTime start_at { get; set; }
-        public DateTime? end_at { get; set; }
-        public string description { get; set; }
-        public string overview { get; set; }
-        public string address { get; set; }
-        public string city { get; set; }
-        public int accepted { get; set; }
-        public int? limit { get; set; }
-
+        public string Site { get; set; }
+        public string Title { get; set; }
+        public string Event_uri { get; set; }
+        public DateTime Start_at { get; set; }
+        public DateTime? End_at { get; set; }
+        public string Description { get; set; }
+        public string Overview { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public int Accepted { get; set; }
+        public int? Limit { get; set; }
+        public string Organizer { get; set; }
     }
 }

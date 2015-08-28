@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,5 +41,6 @@ namespace ITStudySearch.Models
         }
 
         public Event _event { get; set; }
+        
     }
 }

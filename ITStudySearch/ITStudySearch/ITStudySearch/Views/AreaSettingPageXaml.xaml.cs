@@ -12,22 +12,25 @@ namespace ITStudySearch.Views
 {
     public partial class AreaSettingPageXaml : ContentPage
     {
-        AreaSettingPageViewModel vm;
+        public AreaSettingPageViewModel vm { get; private set; }
 
         public AreaSettingPageXaml()
         {
-            InitializeComponent();
-
             // json データがあれば読み込み、デシリアライズして vm に設定します。
             var data = DependencyService.Get<ISaveAndLoad>().LoadData("settings.json");
             this.vm = string.IsNullOrEmpty(data) ? new AreaSettingPageViewModel() : JsonConvert.DeserializeObject<AreaSettingPageViewModel>(data);
             this.BindingContext = vm;
+
+            InitializeComponent();
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             SaveDataToJson(vm);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("Disappering");
+#endif
         }
 
         /// <summary>

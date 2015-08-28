@@ -26,14 +26,6 @@ namespace ITStudySearch.iOS
             // ファイルが無ければ null を返します。
             return (System.IO.File.Exists(filePath)) ? System.IO.File.ReadAllText(filePath) : null;
         }
-        public bool ClearData(string filename)
-        {
-            var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-            var filePath = System.IO.Path.Combine(documentsPath, filename);
-            System.IO.File.Delete(filePath);
-            // ファイルが削除出来ていれば true, そうでなければ false を返します。
-            return (System.IO.File.Exists(filePath)) ? false : true;
-        }
     }
 }
 

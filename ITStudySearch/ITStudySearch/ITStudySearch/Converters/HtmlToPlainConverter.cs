@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace ITStudySearch.Converters
@@ -20,6 +21,10 @@ namespace ITStudySearch.Converters
             var hap = new HtmlAgilityPack.HtmlDocument();
             hap.LoadHtml(value.ToString());
             var doc = hap.DocumentNode.InnerText;
+            doc = doc.Replace(@"&nbsp;", " ").Replace(@"&lt;", "<").Replace(@"&gt;", ">").Replace(@"&amp;", "&");
+
+            var multiCRRegex = new Regex(@"\n\n\n+");
+            doc = multiCRRegex.Replace(doc, "\n\n");
 
             // parameter には数字が入りますので、数値があればその文字数でカットした string を返します。
             int strLength;

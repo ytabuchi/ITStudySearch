@@ -15,7 +15,7 @@ namespace ITStudySearch.Models
             var hap = new HtmlAgilityPack.HtmlDocument();
             hap.LoadHtml(html);
             var doc = hap.DocumentNode.InnerText;
-            doc = doc.Replace(@"&nbsp;", " ").Replace(@"&lt;", "<").Replace(@"&gt;", ">").Replace(@"&amp;", "&");
+            doc = doc.Replace(@"&nbsp;", " ").Replace(@"&lt;", "<").Replace(@"&gt;", ">").Replace(@"&amp;", "&").Replace(@"&quot;", "\"");
 
             var multiCRRegex = new Regex(@"\n\n\n+");
             doc = multiCRRegex.Replace(doc, "\n\n");

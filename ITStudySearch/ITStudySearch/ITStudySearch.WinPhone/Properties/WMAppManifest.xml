@@ -4,7 +4,7 @@
   <Languages xmlns="">
     <Language code="en-US" />
   </Languages>
-  <App xmlns="" ProductID="{131be797-4ce0-4710-acc2-94fa29a4352e}" Title="IT勉強会検索" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="Yoshito Tabuchi" Description="IT勉強会サイトから情報を一覧表示するアプリケーションです。" Publisher="Yoshito Tabuchi" PublisherID="{ab9317a5-9051-4820-826e-3f9ede3a745c}">
+  <App xmlns="" ProductID="{131be797-4ce0-4710-acc2-94fa29a4352e}" Title="IT勉強会検索" RuntimeType="Silverlight" Version="0.0.1.0" Genre="apps.normal" Author="Yoshito Tabuchi" Description="IT勉強会サイトから情報を一覧表示するアプリケーションです。" Publisher="Yoshito Tabuchi" PublisherID="{ab9317a5-9051-4820-826e-3f9ede3a745c}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
@@ -19,11 +19,16 @@
           <Count>0</Count>
           <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileMedium.png</BackgroundImageURI>
           <Title>IT勉強会検索</Title>
-          <BackContent></BackContent>
-          <BackBackgroundImageURI></BackBackgroundImageURI>
-          <BackTitle></BackTitle>
-          <DeviceLockImageURI></DeviceLockImageURI>
-          <HasLarge></HasLarge>
+          <BackContent>
+          </BackContent>
+          <BackBackgroundImageURI>
+          </BackBackgroundImageURI>
+          <BackTitle>
+          </BackTitle>
+          <DeviceLockImageURI>
+          </DeviceLockImageURI>
+          <HasLarge>
+          </HasLarge>
         </TemplateFlip>
       </PrimaryToken>
     </Tokens>

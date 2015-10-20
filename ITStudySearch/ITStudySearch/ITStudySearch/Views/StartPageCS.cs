@@ -15,7 +15,7 @@ namespace ITStudySearch.Views
 {
     public class StartPageCS : ContentPage
     {
-        bool flag; // 通常フェッチ は true
+        bool fetchFlag; // 通常フェッチ は true
         int n = 0;
         GetConnpassJson gcj = new GetConnpassJson();
         GetAtndJson gaj = new GetAtndJson();
@@ -28,6 +28,7 @@ namespace ITStudySearch.Views
         FilterZusaarData fzd = new FilterZusaarData();
 
         HashSet<string> cities;
+        NGWords ngWords;
         HashSet<string> ngWordsList;
         //List<string> ngWords;
         AreaSettingPageViewModel vm;
@@ -37,7 +38,8 @@ namespace ITStudySearch.Views
         DatePicker dateFrom;
         DatePicker dateTo;
         ListView list;
-        StackLayout searchLayer;
+        StackLayout dateLayer;
+        SearchBar searchLayer;
         ContentView waitingLayout;
 
         public StartPageCS()
@@ -45,14 +47,10 @@ namespace ITStudySearch.Views
             this.allEventsInfo = new ObservableCollection<AllEventsInfo>();
             cities = new HashSet<string>();
             ChooseCity();
-            var ngWords = new NGWords();
-            string[] strArray = { "機会学習", "渋谷", "カラオケ" };
-            ngWords.SetNGWords(strArray);
-            ngWordsList = ngWords.GetNGWords();
+            ngWords = new NGWords();
+            ngWordsList = new HashSet<string>();
 
-            
-
-            #region // 日付指定レイヤー searchLayer
+            #region // 日付指定レイヤー dateLayer
 
             dateFrom = new DatePicker
             {
@@ -84,9 +82,9 @@ namespace ITStudySearch.Views
                 WidthRequest = 100,
                 VerticalOptions = LayoutOptions.Center,
             };
-            searchButton.Clicked += SearchButton_Clicked;
+            searchButton.Clicked += dateLayer_SearchButton_Clicked;
 
-            searchLayer = new StackLayout
+            dateLayer = new StackLayout
             {
                 IsVisible = false,
                 Orientation = StackOrientation.Horizontal,
@@ -99,6 +97,17 @@ namespace ITStudySearch.Views
                     searchButton,
                 }
             };
+            #endregion
+
+            #region // 検索レイヤー searchLayer
+
+            searchLayer = new SearchBar
+            {
+                IsVisible = false,
+                Placeholder = "' 'か','でOR検索、&でAND検索",
+            };
+            searchLayer.SearchButtonPressed += SearchLayer_SearchButtonPressed;
+
             #endregion
 
             // クルクルレイヤー waitingLayout
@@ -115,28 +124,37 @@ namespace ITStudySearch.Views
 
             #region ToolbarItems
 
-            //ToolbarItems.Add(new ToolbarItem
-            //{
-            //    Icon = "Search.png",
-            //    Text = "絞り込み検索",
-            //    Command = new Command(() =>
-            //    {
-            //        this.DisplayAlert("絞り込み検索", "Android で SearchBox が動作しません", "閉じる");
-            //    })
-            //});
             ToolbarItems.Add(new ToolbarItem
             {
-                Icon = "Calendar.png",
-                Text = "日付選択",
+                Icon = "Search.png",
+                Text = "絞り込み検索",
                 Command = new Command(() =>
                 {
+                    this.dateLayer.IsVisible = false;
                     if (this.searchLayer.IsVisible)
                     {
                         this.searchLayer.IsVisible = false;
                     }
                     else
                     {
-                        this.searchLayer.IsVisible = true;
+                        searchLayer.IsVisible = true;
+                    }
+                })
+            });
+            ToolbarItems.Add(new ToolbarItem
+            {
+                Icon = "Calendar.png",
+                Text = "日付選択",
+                Command = new Command(() =>
+                {
+                    this.searchLayer.IsVisible = false;
+                    if (this.dateLayer.IsVisible)
+                    {
+                        this.dateLayer.IsVisible = false;
+                    }
+                    else
+                    {
+                        this.dateLayer.IsVisible = true;
                     }
                 })
             });
@@ -144,13 +162,15 @@ namespace ITStudySearch.Views
             {
                 Icon = "Setting.png",
                 Text = "設定",
-                
-                Command = new Command(() => {
+                Command = new Command(() =>
+                {
+                    // 各種データを初期化して次のページへ
+                    n = 0;
                     allEventsInfo.Clear();
-                    //list.ItemsSource = allEventsInfo;
+                    list.ItemsSource = allEventsInfo;
+                    // ここまで
                     Navigation.PushAsync(new SettingPageCS());
-                    }),
-
+                }),
             });
 
             #endregion
@@ -160,11 +180,13 @@ namespace ITStudySearch.Views
             {
                 Children = {
                     searchLayer,
+                    dateLayer,
                     list,
                     waitingLayout,
                 },
             };
         }
+
 
         /// <summary>
         /// ページ表示時に allEventInfo にデータが無ければ取得します。
@@ -179,6 +201,8 @@ namespace ITStudySearch.Views
             {
                 waitingLayout.IsVisible = true;
 
+                ngWordsList = ngWords.GetNGWordsSet();
+                ChooseCity();
                 allEventsInfo = await GetJsonData(n);
                 if (allEventsInfo == null)
                     await DisplayAlert("Error", "すべてのサイトが死んでるかネットワークエラーです。\nネットワークの設定を確認してみてください。", "OK");
@@ -195,7 +219,7 @@ namespace ITStudySearch.Views
         /// <param name="e"></param>
         private async void List_ItemAppearing(object sender, ItemVisibilityEventArgs e)
         {
-            if (allEventsInfo.Last() == e.Item as AllEventsInfo && flag)
+            if (allEventsInfo.Last() == e.Item as AllEventsInfo && fetchFlag)
             {
                 waitingLayout.IsVisible = true;
 
@@ -211,13 +235,13 @@ namespace ITStudySearch.Views
         }
 
         /// <summary>
-        /// SearchButton クリック時のメソッドです。
+        /// 日付レイヤーの SearchButton クリック時のメソッドです。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void SearchButton_Clicked(object sender, EventArgs e)
+        private async void dateLayer_SearchButton_Clicked(object sender, EventArgs e)
         {
-            searchLayer.IsVisible = false;
+            dateLayer.IsVisible = false;
             allEventsInfo.Clear();
 
             waitingLayout.IsVisible = true;
@@ -229,13 +253,36 @@ namespace ITStudySearch.Views
         }
 
         /// <summary>
+        /// 検索レイヤーの SearchButton クリック時のメソッドです。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void SearchLayer_SearchButtonPressed(object sender, EventArgs e)
+        {
+            this.searchLayer.IsVisible = false;
+            allEventsInfo.Clear();
+
+            waitingLayout.IsVisible = true;
+            allEventsInfo = await GetJsonData(searchLayer.Text);
+            if (allEventsInfo == null)
+                await DisplayAlert("Error", "すべてのサイトが死んでるかネットワークエラーです。\nネットワークの設定を確認してみてください。", "OK");
+            list.ItemsSource = allEventsInfo;
+            waitingLayout.IsVisible = false;
+        }
+
+
+        /// <summary>
         /// Json データをパラメーターを指定せずに 25件ずつ取得していきます。
         /// </summary>
         /// <param name="n">1回取得毎にインクリメント</param>
         /// <returns></returns>
         private async Task<ObservableCollection<AllEventsInfo>> GetJsonData(int n)
         {
-            flag = true;
+            int count = allEventsInfo.Count();
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(count);
+#endif
+            fetchFlag = true;
             var ConnpassTask = gcj.GetConnpassJsonAsync(1 + n * 25);
             var AtndTask = gaj.GetAtndJsonAsync(1 + n * 25);
             var DoorkeeperTask = gdj.GetDoorkeeperJsonAsync(1 + n);
@@ -255,8 +302,6 @@ namespace ITStudySearch.Views
             System.Diagnostics.Debug.WriteLine(zusaarResult != null ? $"Zusaar OK: {zusaarResult._event.Count}件" : "Zusaar NG");
 #endif
 
-            #region フェッチデータ
-
             fcd.FilterData(connpassResult, allEventsInfo, ngWordsList, cities);
             fad.FilterData(atndResult, allEventsInfo, ngWordsList, cities);
             fdd.FilterData(doorkeeperResult, allEventsInfo, ngWordsList, cities);
@@ -265,20 +310,24 @@ namespace ITStudySearch.Views
 #if DEBUG
             System.Diagnostics.Debug.WriteLine($"All Events: {allEventsInfo.Count()}件");
 #endif
-
-            if (allEventsInfo != null)
+            if (allEventsInfo.Count() != count)
             {
-                allEventsInfo = new ObservableCollection<AllEventsInfo>(allEventsInfo.OrderBy(e => e.Start_at));
-                return allEventsInfo;
+                if (allEventsInfo != null)
+                {
+                    allEventsInfo = new ObservableCollection<AllEventsInfo>(allEventsInfo.OrderBy(e => e.Start_at));
+                    return allEventsInfo;
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
-                return null;
+                fetchFlag = false;
+                await DisplayAlert("注意", "これ以上はデータが無いようです。", "OK");
+                return allEventsInfo;
             }
-
-
-            #endregion
-
         }
 
         /// <summary>
@@ -289,7 +338,7 @@ namespace ITStudySearch.Views
         /// <returns></returns>
         private async Task<ObservableCollection<AllEventsInfo>> GetJsonData(DateTime from, DateTime to)
         {
-            flag = false;
+            fetchFlag = false; // データ追加なし
             var ConnpassTask = gcj.GetConnpassJsonAsync(from, to);
             var AtndTask = gaj.GetAtndJsonAsync(from, to);
             var DoorkeeperTask = gdj.GetDoorkeeperJsonAsync(from, to);
@@ -307,6 +356,53 @@ namespace ITStudySearch.Views
             System.Diagnostics.Debug.WriteLine(atndResult != null ? $"[DateTime]Atnd OK: {atndResult.events.Count}件" : "[DateTime]Atnd NG");
             System.Diagnostics.Debug.WriteLine(doorkeeperResult != null ? $"[DateTime]Doorkeeper OK: {doorkeeperResult.Count}件" : "[DateTime]Doorkeeper NG");
             System.Diagnostics.Debug.WriteLine(zusaarResult != null ? $"[DateTime]Zusaar OK: {zusaarResult._event.Count}件" : "[DateTime]Zusaar NG");
+#endif
+
+            fcd.FilterData(connpassResult, allEventsInfo, ngWordsList, cities);
+            fad.FilterData(atndResult, allEventsInfo, ngWordsList, cities);
+            fdd.FilterData(doorkeeperResult, allEventsInfo, ngWordsList, cities);
+            fzd.FilterData(zusaarResult, allEventsInfo, ngWordsList, cities);
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"All Event: {allEventsInfo.Count()}件");
+#endif
+
+            if (allEventsInfo != null)
+            {
+                allEventsInfo = new ObservableCollection<AllEventsInfo>(allEventsInfo.OrderBy(e => e.Start_at));
+                return allEventsInfo;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 検索ワードを含むイベントを取得するメソッドです。
+        /// </summary>
+        /// <param name="searchWords"></param>
+        /// <returns></returns>
+        private async Task<ObservableCollection<AllEventsInfo>> GetJsonData(string searchWords)
+        {
+            fetchFlag = false; // データ追加なし
+            var ConnpassTask = gcj.GetConnpassJsonAsync(searchWords);
+            var AtndTask = gaj.GetAtndJsonAsync(searchWords);
+            var DoorkeeperTask = gdj.GetDoorkeeperJsonAsync(searchWords);
+            var ZusaarTask = gzj.GetZusaarJsonAsync(searchWords);
+
+            var connpassResult = await ConnpassTask;
+            var atndResult = await AtndTask;
+            var doorkeeperResult = await DoorkeeperTask;
+            var zusaarResult = await ZusaarTask;
+
+            if (atndResult == null && connpassResult == null && doorkeeperResult == null && zusaarResult == null)
+                return null;
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(connpassResult != null ? $"[Search]Connpass OK: {connpassResult.events.Count}件" : "[DateTime]Connpass NG");
+            System.Diagnostics.Debug.WriteLine(atndResult != null ? $"[Search]Atnd OK: {atndResult.events.Count}件" : "[DateTime]Atnd NG");
+            System.Diagnostics.Debug.WriteLine(doorkeeperResult != null ? $"[Search]Doorkeeper OK: {doorkeeperResult.Count}件" : "[DateTime]Doorkeeper NG");
+            System.Diagnostics.Debug.WriteLine(zusaarResult != null ? $"[Search]Zusaar OK: {zusaarResult._event.Count}件" : "[DateTime]Zusaar NG");
 #endif
 
             #region フェッチデータ
@@ -332,6 +428,7 @@ namespace ITStudySearch.Views
 
         }
 
+
         /// <summary>
         /// ListView の Item Tap メソッドです。
         /// </summary>
@@ -348,6 +445,7 @@ namespace ITStudySearch.Views
         /// </summary>
         void ChooseCity()
         {
+            cities.Clear();
             var data = DependencyService.Get<ISaveAndLoad>().LoadData("settings.json");
             //if (string.IsNullOrEmpty(data) || data == "null")
             //    vm = new AreaSettingPageViewModel();
@@ -454,6 +552,12 @@ namespace ITStudySearch.Views
             if (vm.OtherValue)
                 cities.Add("その他");
             #endregion
+#if DEBUG
+            foreach (var item in cities)
+            {
+                System.Diagnostics.Debug.WriteLine("Cities: " + item);
+            }
+#endif
         }
 
     }

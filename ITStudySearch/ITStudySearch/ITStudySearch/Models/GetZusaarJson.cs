@@ -9,19 +9,16 @@ using System.Threading.Tasks;
 
 namespace ITStudySearch.Models
 {
-    class GetConnpassJson
+    class GetZusaarJson
     {
         /// <summary>
         /// Web サービス標準の出力順序で先頭から json データを取得します。
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        public async Task<ConnpassJson> GetConnpassJsonAsync(int n)
+        public async Task<ZusaarJson> GetZusaarJsonAsync(int n)
         {
-            var uri = new Uri(string.Format("http://connpass.com/api/v1/event/?count=25&start=" + n));
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("***N*** = " + n);
-#endif
+            var uri = new Uri(string.Format("http://www.zusaar.com/api/event/?count=25&start=" + n));
             var res = await GetJsonAsync(uri);
             return res;
         }
@@ -32,7 +29,7 @@ namespace ITStudySearch.Models
         /// <param name="from">開始日</param>
         /// <param name="to">終了日</param>
         /// <returns></returns>
-        public async Task<ConnpassJson> GetConnpassJsonAsync(DateTime from, DateTime to)
+        public async Task<ZusaarJson> GetZusaarJsonAsync(DateTime from, DateTime to)
         {
             // 日数を取得します。
             var timespan = to - from;
@@ -40,7 +37,7 @@ namespace ITStudySearch.Models
 
             // Connpass は ymd に取得するすべての yyyyMMdd を , で接続します。
             var sb = new StringBuilder();
-            sb.Append("count=50&ymd=");
+            sb.Append("ymd=");
 
             for (int i = 0; i < diffDays; i++)
             {
@@ -50,43 +47,35 @@ namespace ITStudySearch.Models
 
             var subUri = sb.ToString();
 
-            var uri = new Uri(string.Format("http://connpass.com/api/v1/event/?" + subUri));
+            var uri = new Uri(string.Format("http://www.zusaar.com/api/event/?count=50&" + subUri));
             var res = await GetJsonAsync(uri);
             return res;
         }
 
-        /// <summary>
-        /// 検索キーワードから Json データを取得します。
-        /// </summary>
-        /// <param name="searchWords"></param>
-        /// <returns></returns>
-        public async Task<ConnpassJson> GetConnpassJsonAsync(string searchWords)
+        public async Task<ZusaarJson> GetZusaarJsonAsync(string searchWords)
         {
-            string subUri = "";
+            var subUri = "";
             searchWords = searchWords.Replace(" ", ","); // 複数の ,,, でも正常に結果が返ってくることを確認
             if (searchWords.Contains("&") || searchWords.Contains("＆"))
             {
                 subUri = "keyword=" + searchWords.Replace("&", ",").Replace("＆", ",");
-            } else
+            }
+            else
             {
                 subUri = "keyword_or=" + searchWords;
             }
-            
-            //var subUri = (searchWords.Replace(" ", ",").Contains("&") || searchWords.Replace(" ", ",").Contains("＆")) ? searchWords.Replace("&", ",").Replace("＆", ",") : searchWords;
 
-            var uri = new Uri(string.Format("http://connpass.com/api/v1/event/?count=50&" + subUri));
+            var uri = new Uri(string.Format("http://www.zusaar.com/api/event/?count=50&" + subUri));
             var res = await GetJsonAsync(uri);
             return res;
         }
 
-        private async Task<ConnpassJson> GetJsonAsync(Uri uri)
+        private async Task<ZusaarJson> GetJsonAsync(Uri uri)
         {
             try
             {
                 using (var client = new HttpClient())
                 {
-                    // Connpass は User-Agent なしのアクセスだと 403 forbidden を返すのでアプリ名を Header に追加します。
-                    client.DefaultRequestHeaders.Add("user-agent", "ITStudySearch Application by Yoshito Tabuchi");
                     var response = await client.GetAsync(uri);
                     response.EnsureSuccessStatusCode(); // StatusCode が 200 以外なら Exception
 
@@ -95,8 +84,8 @@ namespace ITStudySearch.Models
                         using (var streamReader = new StreamReader(stream))
                         {
                             var str = await streamReader.ReadToEndAsync();
-                            var json = str.Replace("catch", "_catch");
-                            var res = JsonConvert.DeserializeObject<ConnpassJson>(
+                            var json = str.Replace("\"event\"", "\"_event\"").Replace("catch", "_catch");
+                            var res = JsonConvert.DeserializeObject<ZusaarJson>(
                                 json, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
                             return res;
                         }
@@ -106,7 +95,7 @@ namespace ITStudySearch.Models
             catch (Exception e)
             {
 #if DEBUG
-                System.Diagnostics.Debug.WriteLine("***Connpass Error***: {0}\n{1}\n{2}", e.Source, e.Message, e.InnerException);
+                System.Diagnostics.Debug.WriteLine("***Zusaar Error***: {0}\n{1}\n{2}", e.Source, e.Message, e.InnerException);
 #endif
                 return null;
             }

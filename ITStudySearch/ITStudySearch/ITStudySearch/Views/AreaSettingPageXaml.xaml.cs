@@ -18,7 +18,7 @@ namespace ITStudySearch.Views
         {
             // json データがあれば読み込み、デシリアライズして vm に設定します。
             var data = DependencyService.Get<ISaveAndLoad>().LoadData("settings.json");
-            this.vm = string.IsNullOrEmpty(data) ? new AreaSettingPageViewModel() : JsonConvert.DeserializeObject<AreaSettingPageViewModel>(data);
+            this.vm = (string.IsNullOrEmpty(data) || data == "null") ? new AreaSettingPageViewModel() : JsonConvert.DeserializeObject<AreaSettingPageViewModel>(data);
             this.BindingContext = vm;
 
             InitializeComponent();

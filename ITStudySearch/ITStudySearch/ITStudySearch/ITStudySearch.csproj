@@ -56,6 +56,8 @@
     <Compile Include="Models\SpecifyCity.cs" />
     <Compile Include="Models\ZusaarJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\LicensePageCS.cs" />
+    <Compile Include="Views\NGWordsSettingPageCS.cs" />
     <Compile Include="ViewModels\AreaSettingPageViewModel.cs" />
     <Compile Include="Views\AreaSettingPageXaml.xaml.cs">
       <DependentUpon>AreaSettingPageXaml.xaml</DependentUpon>

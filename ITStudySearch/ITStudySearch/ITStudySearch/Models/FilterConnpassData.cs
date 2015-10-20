@@ -13,26 +13,26 @@ namespace ITStudySearch.Models
         {
             if (connpassResult != null)
             {
-                var connpassInfo = (from x in connpassResult.events
-                                    join city in cities on SpecifyCity.GetCity(x.address) equals city
-                                    where x.started_at <= DateTime.Now.AddMonths(5)
-                                    where x.started_at > DateTime.Now
-                                    where ngWordsList.Any(z => !x.title.Contains(z))
-                                    select new AllEventsInfo
-                                    {
-                                        Site = "site_connpass.png",
-                                        Title = x.title,
-                                        Event_uri = x.event_url,
-                                        Start_at = x.started_at,
-                                        End_at = x.ended_at,
-                                        Description = x.description,
-                                        Overview = HtmlToString.GetString(x.description, 50),
-                                        Address = x.address,
-                                        City = SpecifyCity.GetCity(x.address),
-                                        Accepted = x.accepted,
-                                        Limit = x.limit,
-                                        Organizer = (x.series == null ? x.owner_display_name : x.series.title),
-                                    });
+                var connpassInfo = from evnt in connpassResult.events
+                                   join city in cities on SpecifyCity.GetCity(evnt.address) equals city
+                                   where evnt.started_at <= DateTime.Now.AddMonths(5)
+                                   where evnt.started_at > DateTime.Now
+                                   where ngWordsList.All(word => !evnt.title.Contains(word))
+                                   select new AllEventsInfo
+                                   {
+                                       Site = "site_connpass.png",
+                                       Title = evnt.title,
+                                       Event_uri = evnt.event_url,
+                                       Start_at = evnt.started_at,
+                                       End_at = evnt.ended_at,
+                                       Description = evnt.description,
+                                       Overview = HtmlToString.GetString(evnt.description, 50),
+                                       Address = evnt.address,
+                                       City = SpecifyCity.GetCity(evnt.address),
+                                       Accepted = evnt.accepted,
+                                       Limit = evnt.limit,
+                                       Organizer = (evnt.series == null ? evnt.owner_display_name : evnt.series.title),
+                                   };
                 foreach (var item in connpassInfo)
                 {
                     allEventsInfo.Add(item);

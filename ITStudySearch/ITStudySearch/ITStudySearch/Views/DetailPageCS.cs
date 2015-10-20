@@ -36,6 +36,12 @@ namespace ITStudySearch.Views
             };
             dateLabel.SetBinding(Label.TextProperty,
                 new Binding("Start_at", stringFormat: "日時： {0:yyyy/M/d HH:mm} ～"));
+            var endLabel = new Label
+            {
+                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+            };
+            endLabel.SetBinding(Label.TextProperty,
+                new Binding("End_at", stringFormat: "{0:HH:mm}"));
             var numberLabel = new Label
             {
                 Text = "人数： ",
@@ -59,7 +65,6 @@ namespace ITStudySearch.Views
             var addressLabel = new Label
             {
                 Style = Application.Current.Resources["SubColoredLabel"] as Style,
-                LineBreakMode = LineBreakMode.TailTruncation,
             };
             addressLabel.SetBinding(Label.TextProperty, "Address", stringFormat: "場所： {0}");
             var organizerLabel = new Label
@@ -74,9 +79,8 @@ namespace ITStudySearch.Views
             siteImage.SetBinding(Image.SourceProperty, "Site");
             var urlLabel = new Label
             {
-                FontSize = 20,
                 LineBreakMode = LineBreakMode.TailTruncation,
-                TextColor = Color.FromHex("425fc9"),
+                TextColor = Color.FromHex("3152C6"),
             };
             urlLabel.SetBinding(Label.TextProperty, "Event_uri");
             urlLabel.GestureRecognizers.Add(tap);
@@ -91,7 +95,7 @@ namespace ITStudySearch.Views
                 Padding = 15,
                 Content = new StackLayout
                 {
-                    Spacing = 15,
+                    Spacing = 10,
                     Children = {
                             titleLabel,
                             new BoxView
@@ -99,7 +103,13 @@ namespace ITStudySearch.Views
                                 Color = Color.FromHex("e2e2e2"),
                                 HeightRequest = 1,
                             },
-                            dateLabel,
+                            new StackLayout {
+                                Orientation = StackOrientation.Horizontal,
+                                Children = {
+                                    dateLabel,
+                                    endLabel,
+                                },
+                            },
                             new StackLayout
                             {
                                 Orientation = StackOrientation.Horizontal,

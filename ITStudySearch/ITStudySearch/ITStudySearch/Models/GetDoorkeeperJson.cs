@@ -11,8 +11,6 @@ namespace ITStudySearch.Models
 {
     class GetDoorkeeperJson
     {
-        List<DoorkeeperJson> res = new List<DoorkeeperJson>();
-
         /// <summary>
         /// Web サービス標準の出力順序で先頭から json データを取得します。
         /// </summary>
@@ -21,8 +19,7 @@ namespace ITStudySearch.Models
         public async Task<List<DoorkeeperJson>> GetDoorkeeperJsonAsync(int n)
         {
             var uri = new Uri(string.Format("http://api.doorkeeper.jp/events/?expand[]=group&page=" + n));
-
-            res = await GetJsonAsync(uri);
+            var res = await GetJsonAsync(uri);
             return res;
         }
 
@@ -39,8 +36,22 @@ namespace ITStudySearch.Models
                 from.ToString("yyyyMMdd"), to.ToString("yyyyMMdd"));
 
             var uri = new Uri(string.Format("http://api.doorkeeper.jp/events/?expand[]=group&" + subUri));
+            var res = await GetJsonAsync(uri);
+            return res;
+        }
 
-            res = await GetJsonAsync(uri);
+        /// <summary>
+        /// 検索キーワードから Json データを取得します。
+        /// </summary>
+        /// <param name="searchWords"></param>
+        /// <returns></returns>
+        public async Task<List<DoorkeeperJson>> GetDoorkeeperJsonAsync(string searchWords)
+        {
+            string subUri = "";
+            subUri = searchWords.Replace(" ", ",").Replace("&", ",").Replace("＆", ","); // 複数の ,,, でも正常に結果が返ってくることを確認
+
+            var uri = new Uri(string.Format("http://api.doorkeeper.jp/events/?expand[]=group&" + subUri));
+            var res = await GetJsonAsync(uri);
             return res;
         }
 
@@ -59,7 +70,7 @@ namespace ITStudySearch.Models
                         {
                             var str = await streamReader.ReadToEndAsync();
                             var json = str.Replace("\"event\"", "\"_event\"").Replace("long", "_long");
-                            res = JsonConvert.DeserializeObject<List<DoorkeeperJson>>(
+                            var res = JsonConvert.DeserializeObject<List<DoorkeeperJson>>(
                                 json, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
                             // starts_at と ends_at が UTC で返ってくるための処理を追加
                             foreach (var item in res)

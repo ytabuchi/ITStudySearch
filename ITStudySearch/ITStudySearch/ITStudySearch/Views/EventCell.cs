@@ -81,6 +81,7 @@ namespace ITStudySearch.Views
                             },
                             new StackLayout
                             {
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
                                 Orientation = StackOrientation.Horizontal,
                                 Children =
                                 {
@@ -109,7 +110,7 @@ namespace ITStudySearch.Views
             // b3a0db
             var dMonth = new Label
             {
-                TextColor = Color.FromHex("fff"),
+                TextColor = Color.FromHex("FFFFFF"),
                 BackgroundColor = Color.FromHex("C0CA33"), // ColorAccent
                 FontSize = 14,
                 XAlign = TextAlignment.Center,
@@ -119,8 +120,8 @@ namespace ITStudySearch.Views
                 new Binding("Start_at", stringFormat: "{0:MM}"));
             var dDay = new Label
             {
-                TextColor = Color.FromHex("555"),
-                BackgroundColor = Color.FromHex("ececec"),
+                TextColor = Color.FromHex("555555"),
+                BackgroundColor = Device.OnPlatform(Color.FromHex("FAFAFA"), Color.FromHex("ECECEC"), Color.FromHex("FAFAFA")),  // ececec
                 FontSize = 30,
                 XAlign = TextAlignment.Center,
                 YAlign = TextAlignment.Center,
@@ -129,8 +130,8 @@ namespace ITStudySearch.Views
                 new Binding("Start_at", stringFormat: "{0:dd}"));
             var dWeekDay = new Label
             {
-                TextColor = Color.FromHex("555"),
-                BackgroundColor = Color.FromHex("e3e3e3"),
+                TextColor = Color.FromHex("555555"),
+                BackgroundColor = Device.OnPlatform(Color.FromHex("EAEAEA"), Color.FromHex("E3E3E3"), Color.FromHex("EAEAEA")),
                 FontSize = 12,
                 XAlign = TextAlignment.Center,
                 YAlign = TextAlignment.Center,
@@ -143,7 +144,7 @@ namespace ITStudySearch.Views
                 Padding = new Thickness(1, 1, 1, 1),
                 RowSpacing = 1,
                 ColumnSpacing = 1,
-                BackgroundColor = Color.FromHex("dedede"),
+                BackgroundColor = Device.OnPlatform(Color.FromHex("E6E6E6"), Color.FromHex("DEDEDE"), Color.FromHex("E6E6E6")),
                 VerticalOptions = LayoutOptions.Start,
                 RowDefinitions = {
                     new RowDefinition { Height = new GridLength (20, GridUnitType.Absolute) },

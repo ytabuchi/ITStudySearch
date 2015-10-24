@@ -140,16 +140,15 @@ packages/
 # (and the packages folder if the line above has been uncommented)
 !packages/build/
 
+# Xamarin Component Directory
+Components/
+
 # Windows Azure Build Output
 csx/
 *.build.csdef
 
 # Windows Store app package directory
 AppPackages/
-
-# Windows Phone Temp Directory
-PerfLogs/
-SubmissionInfo/
 
 # Others
 sql/
@@ -163,9 +162,6 @@ ClientBin/
 *.pfx
 *.publishsettings
 node_modules/
-
-# Others : signed Android Packages
-*.apk
 
 # RIA/Silverlight projects
 Generated_Code/
@@ -194,3 +190,4 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/XF_SearchBarSample/packages

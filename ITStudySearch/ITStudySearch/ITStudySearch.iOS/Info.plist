@@ -21,7 +21,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>MinimumOSVersion</key>
-	<string>7.0</string>
+	<string>10.3</string>
 	<key>CFBundleDisplayName</key>
 	<string>IT勉強会検索</string>
 	<key>CFBundleIdentifier</key>

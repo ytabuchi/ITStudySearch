@@ -13,19 +13,21 @@ namespace ITStudySearch.Views
     {
         public EventCell()
         {
+
             #region 右側
             var titleLabel = new Label
             {
-                Style = Application.Current.Resources["TitleLabel"] as Style
+                TextColor = Color.FromHex("554575"),
+                FontSize = 20,
             };
             titleLabel.SetBinding(Label.TextProperty, "Title");
 
 
             var timeLabel = new Label
             {
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+                TextColor = Color.FromHex("999999"),
                 HorizontalOptions = LayoutOptions.StartAndExpand,
-                YAlign = TextAlignment.End
+                VerticalTextAlignment = TextAlignment.End
             };
             timeLabel.SetBinding(Label.TextProperty,
                 new Binding("Start_at", stringFormat: "時間： {0:HH:mm}～"));
@@ -33,24 +35,26 @@ namespace ITStudySearch.Views
             var numberLabel = new Label
             {
                 Text = "人数： ",
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+                TextColor = Color.FromHex("999999"),
                 HorizontalOptions = LayoutOptions.End,
-                YAlign = TextAlignment.End,
+                VerticalTextAlignment = TextAlignment.End,
             };
+            //numberLabel.SetDynamicResource(VisualElement.StyleProperty, "SubTitleLabel");
+
             var acceptLabel = new Label
             {
                 FontSize = 20,
                 TextColor = Color.FromHex("aa3333"),
                 HorizontalOptions = LayoutOptions.End,
-                YAlign = TextAlignment.End,
+                VerticalTextAlignment = TextAlignment.End,
             };
             acceptLabel.SetBinding(Label.TextProperty,
                 new Binding("Accepted", stringFormat: "{0} "));
             var limitLabel = new Label
             {
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+                TextColor = Color.FromHex("999999"),
                 HorizontalOptions = LayoutOptions.End,
-                YAlign = TextAlignment.End,
+                VerticalTextAlignment = TextAlignment.End,
             };
             limitLabel.SetBinding(Label.TextProperty, "Limit", stringFormat: " / {0}");
 
@@ -113,28 +117,28 @@ namespace ITStudySearch.Views
                 TextColor = Color.FromHex("FFFFFF"),
                 BackgroundColor = Color.FromHex("C0CA33"), // ColorAccent
                 FontSize = 14,
-                XAlign = TextAlignment.Center,
-                YAlign = TextAlignment.Center,
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center,
             };
             dMonth.SetBinding(Label.TextProperty,
                 new Binding("Start_at", stringFormat: "{0:MM}"));
             var dDay = new Label
             {
                 TextColor = Color.FromHex("555555"),
-                BackgroundColor = Device.OnPlatform(Color.FromHex("FAFAFA"), Color.FromHex("ECECEC"), Color.FromHex("FAFAFA")),  // ececec
+                BackgroundColor = Color.FromHex("ececec"),
                 FontSize = 30,
-                XAlign = TextAlignment.Center,
-                YAlign = TextAlignment.Center,
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center,
             };
             dDay.SetBinding(Label.TextProperty,
                 new Binding("Start_at", stringFormat: "{0:dd}"));
             var dWeekDay = new Label
             {
                 TextColor = Color.FromHex("555555"),
-                BackgroundColor = Device.OnPlatform(Color.FromHex("EAEAEA"), Color.FromHex("E3E3E3"), Color.FromHex("EAEAEA")),
+                BackgroundColor = Color.FromHex("E3E3E3"),
                 FontSize = 12,
-                XAlign = TextAlignment.Center,
-                YAlign = TextAlignment.Center,
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center,
             };
             dWeekDay.SetBinding(Label.TextProperty,
                 new Binding("Start_at", stringFormat: "（{0:ddd}）"));
@@ -144,7 +148,7 @@ namespace ITStudySearch.Views
                 Padding = new Thickness(1, 1, 1, 1),
                 RowSpacing = 1,
                 ColumnSpacing = 1,
-                BackgroundColor = Device.OnPlatform(Color.FromHex("E6E6E6"), Color.FromHex("DEDEDE"), Color.FromHex("E6E6E6")),
+                BackgroundColor = Color.FromHex("DEDEDE"),
                 VerticalOptions = LayoutOptions.Start,
                 RowDefinitions = {
                     new RowDefinition { Height = new GridLength (20, GridUnitType.Absolute) },
@@ -167,7 +171,7 @@ namespace ITStudySearch.Views
             {
                 //TextColor = Color.FromHex("444"),
                 FontSize = 14,
-                XAlign = TextAlignment.Center,
+                HorizontalTextAlignment = TextAlignment.Center,
             };
             cityLabel.SetBinding(Label.TextProperty, "City");
 

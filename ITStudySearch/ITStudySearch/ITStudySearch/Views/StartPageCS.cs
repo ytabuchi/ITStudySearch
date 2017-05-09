@@ -56,13 +56,13 @@ namespace ITStudySearch.Views
             {
                 Date = DateTime.Now,
                 Format = "M/d",
-                WidthRequest = Device.OnPlatform(75, 75, 120),
+                WidthRequest = 75, // Device.OnPlatform(75, 75, 120),
             };
             dateTo = new DatePicker
             {
                 Date = DateTime.Now.AddDays(2),
                 Format = "M/d",
-                WidthRequest = Device.OnPlatform(75, 75, 120),
+                WidthRequest = 75, //Device.OnPlatform(75, 75, 120),
                 MinimumDate = dateFrom.Date,
             };
             dateFrom.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
@@ -71,11 +71,11 @@ namespace ITStudySearch.Views
                     dateTo.Date = dateFrom.Date.AddDays(2);
                 dateTo.MinimumDate = dateFrom.Date.AddDays(1);
             };
-            if (Device.OS == TargetPlatform.Windows)
-            {
-                dateTo.WidthRequest = 120;
-                dateFrom.WidthRequest = 120;
-            }
+            //if (Device.OS == TargetPlatform.Windows)
+            //{
+            //    dateTo.WidthRequest = 120;
+            //    dateFrom.WidthRequest = 120;
+            //}
             var searchButton = new Button
             {
                 Text = "検索",
@@ -92,7 +92,7 @@ namespace ITStudySearch.Views
                 Children =
                 {
                     dateFrom,
-                    new Label { Text = "~", YAlign = TextAlignment.Center },
+                    new Label { Text = "~", VerticalTextAlignment = TextAlignment.Center },
                     dateTo,
                     searchButton,
                 }

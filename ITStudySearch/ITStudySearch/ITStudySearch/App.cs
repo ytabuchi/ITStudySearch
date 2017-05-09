@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using Xamarin.Forms;
-using ITStudySearch.Models;
-using ITStudySearch.Views;
 
 namespace ITStudySearch
 {
@@ -35,17 +33,9 @@ namespace ITStudySearch
             };
             Application.Current.Resources.Add("SubColoredLabel", SubColoredLabel);
             #endregion
-            //9783bf
-            var nav = new NavigationPage(new StartPageCS());
+
+            var nav = new NavigationPage(new Views.StartPageCS());
             nav.BarBackgroundColor = Color.FromHex("8c70c1");
-            if (Device.OS == TargetPlatform.Windows)
-            {
-                nav.BarTextColor = Color.Black;
-            }
-            else
-            {
-                nav.BarTextColor = Color.White;
-            }
             MainPage = nav;
         }
 

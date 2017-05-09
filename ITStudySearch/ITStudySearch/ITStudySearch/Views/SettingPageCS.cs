@@ -20,7 +20,7 @@ namespace ITStudySearch.Views
             {
                 ImageSource = "AreaSetting.png",
                 Text = "地域設定",
-                TextColor = Device.OnPlatform(Color.Default, Color.FromHex("666"), Color.Default),
+                //TextColor = Device.OnPlatform(Color.Default, Color.FromHex("666"), Color.Default),
                 //Detail = "検索対象の都道府県を選択してください。",
                 Command = new Command(async () => await Navigation.PushAsync(new AreaSettingPageXaml())),
             };
@@ -30,7 +30,7 @@ namespace ITStudySearch.Views
             {
                 ImageSource = "NGSetting.png",
                 Text = "NGワード設定",
-                TextColor = Device.OnPlatform(Color.Default, Color.FromHex("666"), Color.Default),
+                //TextColor = Device.OnPlatform(Color.Default, Color.FromHex("666"), Color.Default),
                 //Command = new Command(async () => await DisplayAlert("NG ワード", "現バージョンでは固定で\n\n恋活, 婚活, カップル, コンパ, お見合い, 合コン, 街コン, パーティ, Party, 副業, 起業, グルメ\n\nを NG ワードにしています。", "OK")),
                 Command = new Command(async () => await Navigation.PushAsync(new NGWordsSettingPageCS())),
             };
@@ -53,17 +53,14 @@ namespace ITStudySearch.Views
                         new TextCell
                         {
                             Text = "使い方(これから書く)",
-                            TextColor = Device.OnPlatform(Color.Default, Color.FromHex("666"), Color.Default),
                             //Command = new Command(() => Device.OpenUri(new Uri("http://ytabuchi.hatenablog.com/entry/itstudysearch-help"))),
                         },
                         new TextCell {
                             Text = "プライバシーポリシー",
-                            TextColor = Device.OnPlatform(Color.Default, Color.FromHex("666"), Color.Default),
                             Command = new Command(() => Device.OpenUri(new Uri("http://ytabuchi.hatenablog.com/entry/privacypolicies"))),
                         },
                         new TextCell {
                             Text = "著作権情報",
-                            TextColor = Device.OnPlatform(Color.Default, Color.FromHex("666"), Color.Default),
                             Command = new Command(() => Navigation.PushAsync(new LicensePageCS())),
                         },
                     },
@@ -81,12 +78,12 @@ namespace ITStudySearch.Views
                                     new Label
                                     {
                                         Text = "アプリケーション名",
-                                        YAlign = TextAlignment.Center,
+                                        VerticalTextAlignment = TextAlignment.Center,
                                     },
                                     new Label
                                     {
                                         Text = "IT勉強会検索",
-                                        YAlign = TextAlignment.Center,
+                                        VerticalTextAlignment = TextAlignment.Center,
                                         HorizontalOptions = LayoutOptions.EndAndExpand,
                                     },
                                 }
@@ -104,12 +101,12 @@ namespace ITStudySearch.Views
                                     new Label
                                     {
                                         Text = "バージョン",
-                                        YAlign = TextAlignment.Center,
+                                        VerticalTextAlignment = TextAlignment.Center,
                                     },
                                     new Label
                                     {
                                         Text = "v 0.0.2",
-                                        YAlign = TextAlignment.Center,
+                                        VerticalTextAlignment = TextAlignment.Center,
                                         HorizontalOptions = LayoutOptions.EndAndExpand,
                                     },
                                 }
@@ -127,12 +124,12 @@ namespace ITStudySearch.Views
                                     new Label
                                     {
                                         Text = "作成者",
-                                        YAlign = TextAlignment.Center,
+                                        VerticalTextAlignment = TextAlignment.Center,
                                     },
                                     new Label
                                     {
                                         Text = "Yoshito Tabuchi",
-                                        YAlign = TextAlignment.Center,
+                                        VerticalTextAlignment = TextAlignment.Center,
                                         HorizontalOptions = LayoutOptions.EndAndExpand,
                                     },
                                 }

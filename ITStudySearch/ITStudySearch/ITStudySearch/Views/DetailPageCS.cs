@@ -26,50 +26,51 @@ namespace ITStudySearch.Views
 
             var titleLabel = new Label
             {
-                Style = Application.Current.Resources["TitleLabel"] as Style,
+                TextColor = Color.FromHex("554575"),
+                FontSize = 20
             };
             titleLabel.SetBinding(Label.TextProperty, "Title");
 
             var dateLabel = new Label
             {
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+                TextColor = Color.FromHex("999999"),
             };
             dateLabel.SetBinding(Label.TextProperty,
                 new Binding("Start_at", stringFormat: "日時： {0:yyyy/M/d HH:mm} ～"));
             var endLabel = new Label
             {
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+                TextColor = Color.FromHex("999999"),
             };
             endLabel.SetBinding(Label.TextProperty,
                 new Binding("End_at", stringFormat: "{0:HH:mm}"));
             var numberLabel = new Label
             {
                 Text = "人数： ",
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
-                YAlign = TextAlignment.End,
+                TextColor = Color.FromHex("999999"),
+                VerticalTextAlignment = TextAlignment.End,
             };
             var acceptLabel = new Label
             {
                 FontSize = 20,
                 TextColor = Color.FromHex("aa3333"),
-                YAlign = TextAlignment.End,
+                VerticalTextAlignment = TextAlignment.End,
             };
             acceptLabel.SetBinding(Label.TextProperty,
                 new Binding("Accepted", stringFormat: "{0} "));
             var limitLabel = new Label
             {
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
-                YAlign = TextAlignment.End,
+                TextColor = Color.FromHex("999999"),
+                VerticalTextAlignment = TextAlignment.End,
             };
             limitLabel.SetBinding(Label.TextProperty, "Limit", stringFormat: " / {0}");
             var addressLabel = new Label
             {
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+                TextColor = Color.FromHex("999999"),
             };
             addressLabel.SetBinding(Label.TextProperty, "Address", stringFormat: "場所： {0}");
             var organizerLabel = new Label
             {
-                Style = Application.Current.Resources["SubColoredLabel"] as Style,
+                TextColor = Color.FromHex("999999"),
             };
             organizerLabel.SetBinding(Label.TextProperty, "Organizer", stringFormat: "主催者： {0}");
             var siteImage = new Image

@@ -26,7 +26,7 @@ namespace ITStudySearch.Views
                         new Label
                         {
                             Text = "Jsonデータを読み込んでいます...",
-                            XAlign = TextAlignment.Center,
+                            VerticalTextAlignment = TextAlignment.Center,
                         },
                     }
             };

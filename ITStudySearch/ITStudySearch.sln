@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITStudySearch", "ITStudySearch\ITStudySearch\ITStudySearch.csproj", "{0023026F-6EC3-440E-95E8-E0F8474AF50F}"
 EndProject
@@ -184,7 +184,6 @@ Global
 		{70EA53A0-87A1-4538-B107-8BFA550F38F6}.AppStore|x86.Deploy.0 = Release|x86
 		{70EA53A0-87A1-4538-B107-8BFA550F38F6}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{70EA53A0-87A1-4538-B107-8BFA550F38F6}.Debug|Any CPU.Build.0 = Debug|x86
-		{70EA53A0-87A1-4538-B107-8BFA550F38F6}.Debug|Any CPU.Deploy.0 = Debug|x86
 		{70EA53A0-87A1-4538-B107-8BFA550F38F6}.Debug|ARM.ActiveCfg = Debug|ARM
 		{70EA53A0-87A1-4538-B107-8BFA550F38F6}.Debug|ARM.Build.0 = Debug|ARM
 		{70EA53A0-87A1-4538-B107-8BFA550F38F6}.Debug|ARM.Deploy.0 = Debug|ARM

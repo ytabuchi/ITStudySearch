@@ -1,46 +1,48 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    x:Class="ITStudySearch.Resources.AppTheme">
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary x:Class="ITStudySearch.Resources.AppTheme"
+                    xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- HEX指定(Color.FromHex()) -->
+    <!--  HEX指定(Color.FromHex())  -->
     <Color x:Key="LightPerple">#554575</Color>
 
-    <!-- FontAtribute -->
+    <!--  FontAtribute  -->
     <FontAttributes x:Key="FontAttr1">None</FontAttributes>
     <FontAttributes x:Key="FontAttr2">Bold</FontAttributes>
     <FontAttributes x:Key="FontAttr3">Italic</FontAttributes>
 
-    <!--Thickness / Point / Rectangle-->
+    <!--  Thickness / Point / Rectangle  -->
     <Thickness x:Key="Margin1">30,30,0,0</Thickness>
     <Point x:Key="Point1">30,30</Point>
     <Rectangle x:Key="Rect1">0,0,30,30</Rectangle>
 
-    <!--Double / Int32 / String-->
+    <!--  Double / Int32 / String  -->
     <x:Double x:Key="FontSize1">19</x:Double>
     <x:Int32 x:Key="Height1">20</x:Int32>
     <x:String x:Key="Value1">Hogehoge</x:String>
 
     <!--<OnPlatform x:Key="FontFamily1"
-  x:TypeArguments="x:String"
-  iOS="HelveticaNeue"
-  Android="sans-serif"/>-->
+                x:TypeArguments="x:String"
+                Android="sans-serif"
+                iOS="HelveticaNeue" />-->
 
-    <OnPlatform x:TypeArguments="x:Double">
+    <!--<OnPlatform x:TypeArguments="x:Double">
         <On Platform="iOS">20.0</On>
-        <!-- 複数プラットフォームを指定可能 -->
+    -->
+    <!--  複数プラットフォームを指定可能  -->
+    <!--
         <On Platform="Anroid, Windows">42.0</On>
-    </OnPlatform>
-    
-    <!--Style-->
-    <Style x:Key="TitleLabel" TargetType="Label">
-        <Setter Property="FontAttributes" Value="Bold"/>
-        <Setter Property="FontSize" Value="Large"/>
-        <Setter Property="TextColor" Value="{DynamicResource LightPerple}"/>
-    </Style>
+    </OnPlatform>-->
 
-    <Style x:Key="SubTitleLabel" TargetType="Label">
-        <Setter Property="TextColor" Value="#999999"/>
-    </Style>
+    <!--  Style  -->
+    <!--<Style x:Key="TitleLabel" TargetType="Label">
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="Large" />
+        <Setter Property="TextColor" Value="{DynamicResource LightPerple}" />
+    </Style>-->
+
+    <!--<Style x:Key="SubTitleLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="#999999" />
+    </Style>-->
 
 </ResourceDictionary>

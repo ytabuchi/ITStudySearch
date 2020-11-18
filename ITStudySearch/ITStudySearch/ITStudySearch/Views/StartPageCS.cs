@@ -1,15 +1,13 @@
-﻿using System;
+﻿using ITStudySearch.Models;
+using ITStudySearch.ViewModels;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 using System.ComponentModel;
-using Newtonsoft.Json;
-using Xamarin.Forms;
-using ITStudySearch.Models;
-using ITStudySearch.ViewModels;
+using System.Linq;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ITStudySearch.Views
 {

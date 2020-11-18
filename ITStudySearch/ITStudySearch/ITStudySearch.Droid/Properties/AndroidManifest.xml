@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="com.gmail.xlsoft.ytabuchi.ITStudySearch" android:versionName="0.0.2" android:versionCode="2">
-	<uses-sdk android:minSdkVersion="19" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="dev.ytabuchi.ITStudySearch" android:versionName="0.0.2" android:versionCode="2">
+	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="29" />
 	<application android:label="ITStudySearch" android:theme="@style/AppTheme" android:icon="@drawable/icon"></application>
 	<uses-permission android:name="android.permission.INTERNET" />
 </manifest>

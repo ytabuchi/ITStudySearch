@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.4
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITStudySearch", "ITStudySearch\ITStudySearch\ITStudySearch.csproj", "{0023026F-6EC3-440E-95E8-E0F8474AF50F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITStudySearch.iOS", "ITStudySearch\ITStudySearch.iOS\ITStudySearch.iOS.csproj", "{4E597702-BD96-40CA-A465-2D23D5492E50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITStudySearch.Droid", "ITStudySearch\ITStudySearch.Droid\ITStudySearch.Droid.csproj", "{A5AE6530-E592-45A5-97E9-E99F4E1DDA98}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITStudySearch.Android", "ITStudySearch\ITStudySearch.Droid\ITStudySearch.Android.csproj", "{A5AE6530-E592-45A5-97E9-E99F4E1DDA98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITStudySearch.UWP", "ITStudySearch\ITStudySearch.UWP\ITStudySearch.UWP.csproj", "{70EA53A0-87A1-4538-B107-8BFA550F38F6}"
 EndProject
@@ -210,5 +210,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EE6A6B33-DE20-4B3A-B32E-04BBA8D03C97}
 	EndGlobalSection
 EndGlobal
